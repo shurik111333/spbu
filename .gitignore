@@ -59,5 +59,7 @@ targetver.h
 stdafx.cpp
 stdafx.h
 *.ilk
-[Dd]ebud
-[Rr]elease
+*.pch
+ReadMe.txt
+*.unsuccessfulbuild
+*.ipch

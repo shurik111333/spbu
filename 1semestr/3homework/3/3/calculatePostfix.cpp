@@ -44,5 +44,7 @@ double calculatePostfix(char *postfixExpression)
 		}
 		currentIndex++;
 	}
-	return pop(result);
+	double resultValue = pop(result);
+	deleteStack(result);
+	return resultValue;
 }

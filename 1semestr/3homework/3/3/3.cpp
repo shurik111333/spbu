@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <stdio.h>
 #include <cstring>
 #include "calculatePostfix.h"
 
@@ -12,12 +13,11 @@ const int maxLen = 255;
 int main()
 {
 	setlocale(LC_ALL, "rus");
-	cout << "Программа считает значение выражения в постфиксной записи" << endl;
-	cout << "Введите выражение без пробелов" << endl;
+	printf("Программа считает значение выражения в постфиксной записи\n");
+	printf("Введите выражение без пробелов\n");
 	char *inputString = new char[maxLen];
 	memset(inputString, '\0', maxLen * sizeof(char));
 	scanf("%s", inputString);
 	printf("Ответ: %g\n", calculatePostfix(inputString));
 	return 0;
 }
-

@@ -7,17 +7,11 @@ int getPriority(char operation)
 	switch (operation)
 	{
 		case '+':
-		{
-			return 1;
-		}
 		case '-':
 		{
 			return 1;
 		}
 		case '*':
-		{
-			return 2;
-		}
 		case '/':
 		{
 			return 2;
@@ -84,6 +78,6 @@ char *infixToPostfix(char *infixNotation, int inputLength)
 		addSymbol(postfixNotation, postfixLength, pop(operators));
 	}
 	addSymbol(postfixNotation, postfixLength, '\0');
-	clear(operators);
+	deleteStack(operators);
 	return postfixNotation;
 }

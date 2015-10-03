@@ -40,10 +40,11 @@ bool isEmpty(Stack *stack)
 	return (stack->top == nullptr);
 }
 
-void clear(Stack *stack)
+void deleteStack(Stack *stack)
 {
 	while (!isEmpty(stack))
 	{
 		pop(stack);
 	}
+	delete stack;
 }

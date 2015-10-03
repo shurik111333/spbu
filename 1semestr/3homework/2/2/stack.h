@@ -10,6 +10,6 @@ char pop(Stack *stack);
 
 void push(Stack *stack, char newValue);
 
-void clear(Stack *stack);
+void deleteStack(Stack *stack);
 
 bool isEmpty(Stack *stack);

@@ -43,10 +43,11 @@ void push(Stack *stack, double newValue)
 	stack->top = newElement;
 }
 
-void clear(Stack *stack)
+void deleteStack(Stack *stack)
 {
 	while (stack->top != nullptr)
 	{
 		pop(stack);
 	}
+	delete stack;
 }

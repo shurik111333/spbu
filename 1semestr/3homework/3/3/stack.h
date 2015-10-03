@@ -10,4 +10,4 @@ double pop(Stack *stack);
 
 void push(Stack *stack, double newValue);
 
-void clear(Stack *stack);
+void deleteStack(Stack *stack);

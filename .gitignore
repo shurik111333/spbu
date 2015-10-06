@@ -63,3 +63,4 @@ stdafx.h
 ReadMe.txt
 *.unsuccessfulbuild
 *.ipch
+*.config

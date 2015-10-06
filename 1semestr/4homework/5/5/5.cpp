@@ -6,39 +6,30 @@
 
 using namespace std;
 
-void gen(int **a)
-{
-
-}
-
 int main()
 {
-	int n = 0;
-	int k = 0;
-	cin >> n >> k;
+	setlocale(LC_ALL, "rus");
+	cout << "Программа \"Считалочка\". По кругу стоят N человек. Начиная с первого человека, из круга выходит каждый K-й." << endl;
+	cout << "По заданным N и K, программа вернет номер человека, который останется последним" << endl;
+	cout << "Введите N и K" << endl;
+	int numberOfSoldiers = 0;
+	int numberOfDelete = 0;
+	cin >> numberOfSoldiers >> numberOfDelete;
 	List *soldiers = getNewList();
-	for (int i = n; i > 0; i--)
+	for (int i = numberOfSoldiers; i > 0; i--)
 	{
 		addNode(soldiers, i);
 	}
-	int **a = new int *[n];
-	for (int i = 0; i < n; i++)
+	setCurrentElementAtFirst(soldiers);
+	for (int i = 1; i < numberOfSoldiers; i++)
 	{
-		a[i] = new int[k];
-	}
-	gen(a);
-	/*ListNode *currSoldier = soldiers->first;
-	while (soldiers->last->next != soldiers->last)
-	{
-		for (int i = 1; i < k; i++)
+		for (int j = 1; j < numberOfDelete; j++)
 		{
-			currSoldier = currSoldier->next;
+			goToNext(soldiers);
 		}
-		ListNode *nextSoldier = currSoldier->next;
-		deleteNode(soldiers, currSoldier->value);
-		currSoldier = nextSoldier;
+		deleteNode(soldiers, getCurrentElement(soldiers));
 	}
-	cout << soldiers->first->value << endl;*/
-	system("pause");
+	cout << "Ответ: " << getCurrentElement(soldiers) << endl;
+	deleteList(soldiers);
 	return 0;
 }

@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -56,6 +57,11 @@ int main()
 	{
 		cout << inputArray[i][0] << " ";
 	}
+	for (int i = 0; i < n; i++)
+	{
+		delete[] inputArray[i];
+	}
+	delete[] inputArray;
 	cout << endl;
 	return 0;
 }

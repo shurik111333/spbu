@@ -64,3 +64,4 @@ ReadMe.txt
 *.unsuccessfulbuild
 *.ipch
 *.config
+*.pro

@@ -1,0 +1,6 @@
+D:\git\spbu\gcd\gcd\bin\Debug\gcd.exe.config
+D:\git\spbu\gcd\gcd\bin\Debug\gcd.exe
+D:\git\spbu\gcd\gcd\bin\Debug\gcd.pdb
+D:\git\spbu\gcd\gcd\obj\Debug\gcd.csprojResolveAssemblyReference.cache
+D:\git\spbu\gcd\gcd\obj\Debug\gcd.exe
+D:\git\spbu\gcd\gcd\obj\Debug\gcd.pdb

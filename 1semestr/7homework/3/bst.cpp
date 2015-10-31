@@ -1,5 +1,5 @@
 #include <iostream>
-#include <str.h>
+#include <myString.h>
 
 using namespace std;
 
@@ -21,23 +21,18 @@ struct BSTNode
 
 struct BST
 {
+    int size = 0;
+    int totalLength = 0;
     BSTNode *root = nullptr;
 };
 
 enum Action
 {
-    nothing,
     addAction,
-    removeAction,
+    removeNodeAction,
+    removeAllAction,
     getCountAction,
     findAction
-};
-
-enum PrintTreeType
-{
-    defaultOrder,
-    ascendingOrder,
-    descendingOrder
 };
 
 BST *getNewBST()
@@ -50,9 +45,14 @@ BST **getNewBSTArray(int count)
    BST **result = new BST*[count];
    for (int i = 0; i < count; i++)
    {
-       result[i] = new BST;
+       result[i] = getNewBST();
    }
    return result;
+}
+
+String *getRoot(BST *tree)
+{
+    return tree->root ? tree->root->value : nullptr;
 }
 
 int getHeight(BSTNode *node)
@@ -132,47 +132,47 @@ BSTNode **getNextNode(BSTNode *&node)
 
 int find(BSTNode *&node, String *value, Action action);
 
-bool removeNode(BSTNode *&node)
+bool removeNode(BSTNode *&node, bool isDeleteValue = true)
 {
     if (node == nullptr)
         return false;
 
+    if (isDeleteValue)
+        deleteString(node->value);
     if (!(node->left || node->right))
     {
-        deleteString(node->value);
         delete node;
         node = nullptr;
         return true;
     }
     if (node->left == nullptr)
     {
-        deleteString(node->value);
-        node = node->right;
+        BSTNode *tmp = node->right;
+        delete node;
+        node = tmp;
         return true;
     }
     if (node->right == nullptr)
     {
-        deleteString(node->value);
-        node = node->left;
+        BSTNode *tmp = node->left;
+        delete node;
+        node = tmp;
         return true;
     }
     BSTNode **tmp = getNextNode(node);
-    deleteString(node->value);
-    node->value = clone((*tmp)->value);
+    node->value = (*tmp)->value;
     node->count = (*tmp)->count;
-    find(node->right, (*tmp)->value, removeAction);
+    find(node->right, (*tmp)->value, removeNodeAction);
     return true;
 }
 
-bool addNode(BSTNode *&node, String *value)
+int addNode(BSTNode *&node, String *value)
 {
     if (node != nullptr)
-    {
         node->count++;
-        return false;
-    }
-    node = new BSTNode(value);
-    return true;
+    else
+        node = new BSTNode(value);
+    return node->count - 1;
 }
 
 int getCount(BSTNode *node)
@@ -188,7 +188,11 @@ int doAction(BSTNode *&node, String *value, Action action)
     {
         return addNode(node, value);
     }
-    case removeAction:
+    case removeNodeAction:
+    {
+        return removeNode(node, false);
+    }
+    case removeAllAction:
     {
         return removeNode(node);
     }
@@ -198,7 +202,7 @@ int doAction(BSTNode *&node, String *value, Action action)
     }
     case findAction:
     {
-        return node != nullptr;
+        return (int)node;
     }
     default:
     {
@@ -210,15 +214,13 @@ int doAction(BSTNode *&node, String *value, Action action)
 int find(BSTNode *&node, String *value, Action action = findAction)
 {
     int result = 0;
-    if (node == nullptr || (*node->value) == (*value))
-    //if (node == nullptr || compare(node->value, value) == 0)
+    if (node == nullptr || compare(node->value, value) == 0)
     {
         result = doAction(node, value, action);
     }
     else
     {
-        if ((*node->value) > (*value))
-        //if (compare(node->value, value) > 0)
+        if (compare(node->value, value) > 0)
         {
             result = find(node->left, value, action);
         }
@@ -231,6 +233,11 @@ int find(BSTNode *&node, String *value, Action action = findAction)
     return result;
 }
 
+int getSize(BST *tree)
+{
+    return tree ? tree->size : 0;
+}
+
 int getCount(BST *tree, String *value)
 {
     return find(tree->root, value, getCountAction);
@@ -238,12 +245,38 @@ int getCount(BST *tree, String *value)
 
 bool remove(BST *tree, String *value)
 {
-    return find(tree->root, value, removeAction);
+    if (find(tree->root, value, removeNodeAction))
+    {
+        tree->size--;
+        return true;
+    }
+    return false;
 }
 
-bool add(BST *tree, String *value)
+bool addToBST(BST *tree, String *value)
 {
-    return find(tree->root, value, addAction);
+    if (!find(tree->root, value, addAction))
+    {
+        tree->size++;
+        tree->totalLength += length(value);
+        return true;
+    }
+    return false;
+}
+
+void setCount(BSTNode *node, int count)
+{
+    node->count = count;
+}
+
+void addToBST(BST *tree, String *value, int count)
+{
+    if (count > 0)
+    {
+        addToBST(tree, value);
+        BSTNode *node = (BSTNode*)find(tree->root, value);
+        setCount(node, node->count + count - 1);
+    }
 }
 
 bool isExist(BST *tree, String *value)
@@ -262,57 +295,35 @@ void printTreeInAscendingOrder(BSTNode *node)
     printTreeInAscendingOrder(node->right);
 }
 
-void printTreeInDescendingOrder(BSTNode *node)
+void getTreeInString(BSTNode *node, char *string, int &index)
 {
     if (node == nullptr)
-    {
         return;
+
+    getTreeInString(node->left, string, index);
+    for (int i = 0; i < length(node->value); i++)
+    {
+        string[index] = getChar(node->value, i);
+        index++;
     }
-    printTreeInDescendingOrder(node->right);
-    cout << node->value << " ";
-    printTreeInDescendingOrder(node->left);
+    string[index++] = '\n';
+    getTreeInString(node->right, string, index);
 }
 
-void printTree(BSTNode *node)
+char *getTreeInString(BST *tree)
 {
-    if (node == nullptr)
-    {
-        cout << "null ";
-        return;
-    }
-    cout << "( " << node->value << " ";
-    printTree(node->left);
-    printTree(node->right);
-    cout << ") ";
-
-}
-
-void printTree(BST *tree, int modifier)
-{
-    switch ((PrintTreeType)modifier)
-    {
-    case defaultOrder:
-    {
-        printTree(tree->root);
-        break;
-    }
-    case ascendingOrder:
-    {
-        printTreeInAscendingOrder(tree->root);
-        break;
-    }
-    case descendingOrder:
-        printTreeInDescendingOrder(tree->root);
-        break;
-    }
-    cout << endl;
+    char *result = new char[tree->totalLength + tree->size + 1];
+    int index = 0;
+    getTreeInString(tree->root, result, index);
+    result[index] = '\0';
+    return result;
 }
 
 void removeTree(BST *tree)
 {
     while (tree->root)
     {
-        find(tree->root, tree->root->value, removeAction);
+        find(tree->root, tree->root->value, removeAllAction);
     }
     delete tree;
 }

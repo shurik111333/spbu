@@ -1,13 +1,6 @@
 #pragma once
 
-struct String
-{
-    bool operator ==(const String &string);
-
-    bool operator <(const String &string);
-
-    bool operator >(const String &string);
-};
+struct String;
 
 String *getNewString(char *newString);
 

@@ -1,0 +1,6 @@
+D:\git\spbu\olympic\CommandTrainings\14.10.15 div1\ProjectHcs\ProjectHcs\bin\Debug\ProjectHcs.exe.config
+D:\git\spbu\olympic\CommandTrainings\14.10.15 div1\ProjectHcs\ProjectHcs\bin\Debug\ProjectHcs.exe
+D:\git\spbu\olympic\CommandTrainings\14.10.15 div1\ProjectHcs\ProjectHcs\bin\Debug\ProjectHcs.pdb
+D:\git\spbu\olympic\CommandTrainings\14.10.15 div1\ProjectHcs\ProjectHcs\obj\Debug\ProjectHcs.csprojResolveAssemblyReference.cache
+D:\git\spbu\olympic\CommandTrainings\14.10.15 div1\ProjectHcs\ProjectHcs\obj\Debug\ProjectHcs.exe
+D:\git\spbu\olympic\CommandTrainings\14.10.15 div1\ProjectHcs\ProjectHcs\obj\Debug\ProjectHcs.pdb

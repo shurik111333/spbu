@@ -1,7 +1,4 @@
-int min(int a, int b)
-{
-    return a < b ? a : b;
-}
+#include <algorithm>
 
 struct String
 {
@@ -19,9 +16,9 @@ struct String
         value[length] = '\0';
     }
 
-    void compareStrings(const String &string, int &index)
+    void skipEqual(const String &string, int &index)
     {
-        while (index < min(this->length, string.length) && this->value[index] == string.value[index])
+        while (index < std::min(this->length, string.length) && this->value[index] == string.value[index])
         {
             index++;
         }
@@ -30,37 +27,36 @@ struct String
     bool operator == (const String &string)
     {
         int index = 0;
-        compareStrings(string, index);
-        return (index == min(this->length, string.length) && this->length == string.length);
+        skipEqual(string, index);
+        return (index == std::min(this->length, string.length) && this->length == string.length);
 
     }
 
     bool operator < (const String &string)
     {
         int index = 0;
-        compareStrings(string, index);
-        return (index == min(this->length, string.length) && this->length < string.length) ||
-               (index < min(this->length, string.length) && this->value[index] < string.value[index]);
+        skipEqual(string, index);
+        return (index == std::min(this->length, string.length) && this->length < string.length) ||
+               (index < std::min(this->length, string.length) && this->value[index] < string.value[index]);
     }
 
     bool operator > (const String &string)
     {
         int index = 0;
-        compareStrings(string, index);
-        return (index == min(this->length, string.length) && this->length > string.length) ||
-               (index > min(this->length, string.length) && this->value[index] > string.value[index]);
+        skipEqual(string, index);
+        return (index ==std:: min(this->length, string.length) && this->length > string.length) ||
+               (index < std::min(this->length, string.length) && this->value[index] > string.value[index]);
     }
 };
 
-/*bool abc(String *str1, String *str2)
+int compare(String *string1, String *string2)
 {
-    return *str1 == *str2;
+    if (*string1 == *string2)
+        return 0;
+    else
+        return *string1 > *string2 ? 1 : -1;
+    return 0;
 }
-
-bool abc1(String *str1, String *str2)
-{
-    return *str1 > *str2;
-}*/
 
 int length(char *string)
 {
@@ -108,15 +104,6 @@ void concat(String *string, String *stringToConcat)
     delete string->value;
     string->value = newString;
 }
-
-
-/*int compare(String *string1, String *string2)
-{
-    if (*string1 == *string2)
-        return 0;
-    else
-        return *string1 > *string2 ? 1 : -1;
-}*/
 
 bool isEmpty(String *string)
 {

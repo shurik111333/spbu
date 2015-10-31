@@ -1,10 +1,27 @@
 #pragma once
-#include <str.h>
+
+#include <myString.h>
 
 struct Hashmap;
 
 Hashmap *getNewHashmap(int size);
 
-void addToMap(Hashmap *map, String *string);
+void addToMap(Hashmap *&map, String *string);
 
 bool findInMap(Hashmap *map, String *string);
+
+int getMaxLength(Hashmap *map);
+
+int getMapSize(Hashmap *map);
+
+char *getMaxChain(Hashmap *map, int &count);
+
+double getLoadFactor(Hashmap *map);
+
+int getNumberOfEmpty(Hashmap *map);
+
+double getAverageLengthOfChain(Hashmap *map);
+
+int getTotalNumberOfWords(Hashmap *map);
+
+void removeMap(Hashmap *map);

@@ -6,6 +6,7 @@ using namespace std;
 const int maxBitCount = 64;
 const int lenExponent = 11;
 const int lenMantissa = maxBitCount - lenExponent - 1;
+const int accuracy = 16;
 
 int main()
 {
@@ -13,7 +14,7 @@ int main()
     cout << "¬ведите число с плавающей точкой" << endl;
     double inputNumber = 0;
     cin >> inputNumber;
-    double mantissa = 0;
+    long double mantissa = 0;
     long long order = 0;
     unsigned long long *pointerToDouble = (unsigned long long *)&inputNumber;
     unsigned long long orderPower = 1;
@@ -42,7 +43,7 @@ int main()
         *pointerToDouble >>= 1;
         mantissPower >>= 1;
     }
-    cout << sign << setprecision(16) << mantissa + 1 << "*2^(" << order - (1 << (lenExponent - 1)) + 1 << ')' << endl;
+    cout << sign << setprecision(accuracy) << mantissa + 1 << "*2^(" << order - (1 << (lenExponent - 1)) + 1 << ')' << endl;
     return 0;
 }
 

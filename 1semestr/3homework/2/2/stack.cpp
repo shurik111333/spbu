@@ -1,7 +1,7 @@
 struct StackNode
 {
 	char value;
-	StackNode * next;
+	StackNode *next;
 };
 
 struct Stack

@@ -1,11 +1,12 @@
 #include <iostream>
 #include <hashmap.h>
-#include <str.h>
+#include <myString.h>
 #include <cstring>
 
 using namespace std;
 
 const int maxLen = 256;
+const int startSize = 100;
 
 void deleteNewLineSymbol(char *string)
 {
@@ -18,6 +19,7 @@ void deleteNewLineSymbol(char *string)
 FILE *getFileToRead()
 {
     char fileName[maxLen] = {};
+    cout << "Введите имя файла" << endl;
     fgets(fileName, maxLen - 1, stdin);
     deleteNewLineSymbol(fileName);
     FILE *fileToRead = fopen(fileName, "r");
@@ -40,8 +42,7 @@ String *getNextWord(FILE *file)
     }
     if (feof(file))
         return nullptr;
-    char *newWord = new char[maxLen];
-    //newWord[0] = currentChar;
+    char newWord[maxLen] = {};
     int length = 0;
     while (isalpha(currentChar) && !feof(file))
     {
@@ -51,21 +52,30 @@ String *getNextWord(FILE *file)
     }
     newWord[length] = '\0';
     String *word = getNewString(newWord);
-    delete newWord;
     return word;
 }
 
 int main()
 {
     setlocale(LC_ALL, "rus");
+    cout << "Программа записывает все слова из файла в хеш таблицу и выводит ее параметры" << endl;
     FILE *fileToRead = getFileToRead();
     String *nextWord = getNextWord(fileToRead);
-    Hashmap *map = getNewHashmap(100);
+    Hashmap *map = getNewHashmap(startSize);
     while (nextWord)
     {
         addToMap(map, nextWord);
         nextWord = getNextWord(fileToRead);
     }
+    cout << "Load factor: " << getLoadFactor(map) << endl;
+    cout << "Средняя длина цепочки: " << getAverageLengthOfChain(map) << endl;
+    int count = 0;
+    char *maxChain = getMaxChain(map, count);
+    cout << "Максимальная длина цепочки: " << count << endl;
+    cout << "Элементы из максимальной цепочки:" << endl << maxChain;
+    cout << "Общее число слов: " << getTotalNumberOfWords(map) << endl;
+    cout << "Количество пустых ячеек: " << getNumberOfEmpty(map) << endl;
+    removeMap(map);
     return 0;
 }
 

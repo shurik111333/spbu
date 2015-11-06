@@ -21,14 +21,6 @@ bool Lee(int **field, int height, int width, int x0, int y0, int x1, int y1)
         return false;
     }
     bool result = false;
-    for (int i = 0; i < width; i++)
-    {
-        for (int j = 0; j < height; j++)
-        {
-            if (field[i][j] != wall)
-                field[i][j] = space;
-        }
-    }
     Queue *pointsX = getNewQueue();
     Queue *pointsY = getNewQueue();
     push(pointsX, x0);
@@ -98,6 +90,8 @@ int main()
         for (int j = 0; j < m; j++)
         {
             fin >> field[i][j];
+            if (field[i][j] != wall)
+                field[i][j] = space;
         }
     }
     int x0, y0, x1, y1;

@@ -47,11 +47,11 @@ int main()
     for (int i = 0; i < numberOfVertex; i++)
     {
         cout << names[i] << " ";
-        delete matrix[i];
+        delete[] matrix[i];
     }
     cout << endl;
-    delete matrix;
-    delete names;
+    delete[] matrix;
+    delete[] names;
     return 0;
 }
 

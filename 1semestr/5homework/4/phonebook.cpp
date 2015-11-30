@@ -17,7 +17,10 @@ struct PhonebookNode
 struct Phonebook
 {
     PhonebookNode *first;
+
 };
+
+const char *def = "st";
 
 void addPhoneNumber(Phonebook *book, char *name, char *phone)
 {

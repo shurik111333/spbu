@@ -1,7 +1,8 @@
 #include <iostream>
-#include <hashmap.h>
-#include <myString.h>
+#include "hashmap.h"
+#include "myString.h"
 #include <cstring>
+#include <cctype>
 
 using namespace std;
 
@@ -51,8 +52,7 @@ String *getNextWord(FILE *file)
         currentChar = getc(file);
     }
     newWord[length] = '\0';
-    String *word = getNewString(newWord);
-    return word;
+    return new String(newWord, length);
 }
 
 int main()
@@ -64,15 +64,18 @@ int main()
     Hashmap *map = getNewHashmap(startSize);
     while (nextWord)
     {
-        addToMap(map, nextWord);
+        if (!addToMap(map, nextWord))
+            delete nextWord;
         nextWord = getNextWord(fileToRead);
     }
+    fclose(fileToRead);
     cout << "Load factor: " << getLoadFactor(map) << endl;
     cout << "—редн€€ длина цепочки: " << getAverageLengthOfChain(map) << endl;
     int count = 0;
     char *maxChain = getMaxChain(map, count);
     cout << "ћаксимальна€ длина цепочки: " << count << endl;
     cout << "Ёлементы из максимальной цепочки:" << endl << maxChain;
+    delete maxChain;
     cout << "ќбщее число слов: " << getTotalNumberOfWords(map) << endl;
     cout << " оличество пустых €чеек: " << getNumberOfEmpty(map) << endl;
     removeMap(map);

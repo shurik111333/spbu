@@ -44,9 +44,9 @@ int main()
     }
     for (int i = 0; i < numberOfVertex; i++)
     {
-        delete matrix[i];
+        delete[] matrix[i];
     }
-    delete matrix;
+    delete[] matrix;
     cout << "Компоненты связности:\n";
     for (int i = 1; i <= color; i++)
     {
@@ -60,7 +60,7 @@ int main()
         }
         cout << endl;
     }
-    delete used;
+    delete[] used;
     return 0;
 }
 

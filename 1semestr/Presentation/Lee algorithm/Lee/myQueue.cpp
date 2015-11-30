@@ -41,6 +41,11 @@ void push(Queue *queue, int value)
     queue->tail = newNode;
 }
 
+int getFirst(Queue *queue)
+{
+    return queue->first->value;
+}
+
 int pop(Queue *queue)
 {
     int result = queue->first->value;

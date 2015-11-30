@@ -1,61 +1,74 @@
-#include <algorithm>
+#include "myString.h"
+#include <cstring>
 
-struct String
+int min(int a, int b);
+
+char *String::initValue(const char *string)
 {
-    char *value;
-    int length;
-
-    String (char *newString, int length)
+    char *value = new char[length + 1];
+    for (int i = 0; i < length; i++)
     {
-        this->length = length;
-        value = new char[length + 1];
-        for (int i = 0; i < length; i++)
-        {
-            value[i] = newString[i];
-        }
-        value[length] = '\0';
+        value[i] = string[i];
     }
+    value[length] = '\0';
+    return value;
+}
 
-    void skipEqual(const String &string, int &index)
-    {
-        while (index < std::min(this->length, string.length) && this->value[index] == string.value[index])
-        {
-            index++;
-        }
-    }
+String::String(const String *string)
+    :length(string->length), value(initValue(string->value))
+{}
 
-    bool operator == (const String &string)
-    {
-        int index = 0;
-        skipEqual(string, index);
-        return (index == std::min(this->length, string.length) && this->length == string.length);
+String::String(const char *newString)
+    :length(std::strlen(newString)), value(initValue(newString))
+{}
 
-    }
+String::String (const char *newString, int length)
+    :length(length), value(initValue(newString))
+{}
 
-    bool operator < (const String &string)
-    {
-        int index = 0;
-        skipEqual(string, index);
-        return (index == std::min(this->length, string.length) && this->length < string.length) ||
-               (index < std::min(this->length, string.length) && this->value[index] < string.value[index]);
-    }
-
-    bool operator > (const String &string)
-    {
-        int index = 0;
-        skipEqual(string, index);
-        return (index ==std:: min(this->length, string.length) && this->length > string.length) ||
-               (index < std::min(this->length, string.length) && this->value[index] > string.value[index]);
-    }
-};
-
-int compare(String *string1, String *string2)
+String::~String()
 {
-    if (*string1 == *string2)
-        return 0;
-    else
-        return *string1 > *string2 ? 1 : -1;
-    return 0;
+    delete[] this->value;
+}
+
+void String::skipEqual(const String &str1, const String &str2, int &index) const
+{
+    while (index < min(str1.length, str2.length) && str1.value[index] == str2.value[index])
+    {
+        index++;
+    }
+}
+
+bool String::operator ==(const String &string) const
+{
+    int index = 0;
+    skipEqual(*this, string, index);
+    return (index == min(this->length, string.length) && this->length == string.length);
+}
+
+bool String::operator !=(const String &string) const
+{
+    return !(*this == string);
+}
+
+bool String::operator <(const String &string) const
+{
+    int index = 0;
+    skipEqual(*this, string, index);
+    return (index == min(this->length, string.length) && this->length < string.length) ||
+           (index < min(this->length, string.length) && this->value[index] < string.value[index]);
+}
+
+bool String::operator >(const String &string) const
+{
+    return string < *this;
+}
+
+std::ostream &operator <<(std::ostream &out, const String &string)
+{
+    if (!isEmpty(&string))
+        out << string.value;
+    return out;
 }
 
 int length(char *string)
@@ -68,9 +81,22 @@ int length(char *string)
     return result;
 }
 
-int length(String *string)
+int length(const String *string)
 {
     return string == nullptr ? 0 : string->length;
+}
+
+const int p = 53;
+const int module = 1000000000 + 7;
+
+int getHash(const String *string)
+{
+    long long result = (unsigned char)string->value[0];
+    for (int i = 1; i < length(string); i++)
+    {
+        result = (result * p + (unsigned char)string->value[i]) % module;
+    }
+    return result;
 }
 
 char getChar(String *string, int index)
@@ -78,17 +104,12 @@ char getChar(String *string, int index)
     return index < length(string) ? string->value[index] : '\0';
 }
 
-String *getNewString(char *newString)
+String *clone(const String *string)
 {
-    return new String(newString, length(newString));
+    return new String(string);
 }
 
-String *clone(String *string)
-{
-    return new String(string->value, length(string));
-}
-
-void concat(String *string, String *stringToConcat)
+String *concat(String *string, const String *stringToConcat)
 {
     int newLength = length(string) + length(stringToConcat);
     char *newString = new char[newLength + 1];
@@ -101,39 +122,34 @@ void concat(String *string, String *stringToConcat)
         newString[i + length(string)] = stringToConcat->value[i];
     }
     newString[newLength] = '\0';
-    delete string->value;
-    string->value = newString;
+    delete string;
+    string = new String(newString, newLength);
+    return string;
 }
 
-bool isEmpty(String *string)
+int min(int a, int b)
+{
+    return a < b ? a : b;
+}
+
+bool isEmpty(const String *string)
 {
     return length(string) == 0;
 }
 
-String *substring(String *string, int start, int length)
+String *substring(const String *string, int start, int length)
 {
-    char *substr = new char[length + 1];
-    for (int i = start; i < start + length; i++)
+    int newLength = min(length, string->length - start);
+    char *substr = new char[newLength + 1];
+    for (int i = start; i < start + newLength; i++)
     {
         substr[i - start] = string->value[i];
     }
-    substr[length] = '\0';
-    return new String(substr, length);
+    substr[newLength] = '\0';
+    return new String(substr, newLength);
 }
 
-const int p = 53;
-
-unsigned long long getHash(String *string)
-{
-    unsigned long long result = string->value[0];
-    for (int i = 1; i < length(string); i++)
-    {
-        result = result * p + string->value[i];
-    }
-    return result;
-}
-
-char *stringToChar(String *string)
+char *stringToChar(const String *string)
 {
     char *result = new char[length(string) + 1];
     for (int i = 0; i < length(string); i++)
@@ -142,10 +158,4 @@ char *stringToChar(String *string)
     }
     result[length(string)] = '\0';
     return result;
-}
-
-void deleteString(String *string)
-{
-    delete string->value;
-    delete string;
 }

@@ -1,5 +1,6 @@
 #include <iostream>
-#include <myString.h>
+#include "myString.h"
+#include "bst.h"
 
 using namespace std;
 
@@ -14,8 +15,10 @@ struct BSTNode
     BSTNode(String *value)
     {
         this->value = value;
-        height = count = 1;
-        left = right = nullptr;
+        height = 1;
+        count = 1;
+        left = nullptr;
+        right = nullptr;
     }
 };
 
@@ -138,7 +141,7 @@ bool removeNode(BSTNode *&node, bool isDeleteValue = true)
         return false;
 
     if (isDeleteValue)
-        deleteString(node->value);
+        delete node->value;
     if (!(node->left || node->right))
     {
         delete node;
@@ -214,13 +217,13 @@ int doAction(BSTNode *&node, String *value, Action action)
 int find(BSTNode *&node, String *value, Action action = findAction)
 {
     int result = 0;
-    if (node == nullptr || compare(node->value, value) == 0)
+    if (node == nullptr || *node->value == *value)
     {
         result = doAction(node, value, action);
     }
     else
     {
-        if (compare(node->value, value) > 0)
+        if (*node->value > *value)
         {
             result = find(node->left, value, action);
         }

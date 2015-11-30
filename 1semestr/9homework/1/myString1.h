@@ -4,9 +4,15 @@ struct String;
 
 String *getNewString(char *newString);
 
+String *getNewString(char *newString, int length);
+
 int length(String *string);
 
 String *clone(String *string);
+
+char getChar(String *string, int index);
+
+int getHash(String *string);
 
 void concat(String *string, String *stringToConcat);
 

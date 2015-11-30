@@ -37,6 +37,7 @@ int main()
     cout << "Введите имя файла" << endl;
     FILE *fileToRead = getFileToRead();
     BST *tree = getNewBST(fileToRead);
+    fclose(fileToRead);
     writeTree(tree);
     cout << "Результат: " << calculateTree(tree) << endl;
     removeTree(tree);

@@ -48,7 +48,7 @@ void dijkstra(int startVertex, int numberOfVertex, int **matrix, int distance[],
         isProcessed[minVertex] = true;
         minVertex = extractMin(numberOfVertex, distance, isProcessed);
     }
-    delete isProcessed;
+    delete[] isProcessed;
 }
 
 void qSort(int left, int right, int distance[], int parent[], int index[])
@@ -109,19 +109,19 @@ int main()
     dijkstra(0, n, matrix, distance, parent);
     for (int i = 0; i < n; i++)
     {
-        delete matrix[i];
+        delete[] matrix[i];
     }
-    delete matrix;
+    delete[] matrix;
     int *index = new int[n];
     for (int i = 0; i < n; i++)
     {
         index[i] = i;
     }
     qSort(0, n - 1, distance, parent, index);
-    int *indexLinks = new int[n];
+    int *indexAfterSort = new int[n];
     for (int i = 0; i < n; i++)
     {
-        indexLinks[index[i]] = i;
+        indexAfterSort[index[i]] = i;
     }
     int *path = new int[n];
     cout << "Порядок захвата городов:" << endl;
@@ -132,7 +132,7 @@ int main()
         while (currentVertex > 0)
         {
             path[count++] = currentVertex;
-            currentVertex = parent[indexLinks[currentVertex]];
+            currentVertex = parent[indexAfterSort[currentVertex]];
         }
         path[count] = index[0];
         cout << "Город " << index[i] + 1 << ", расстояние " << distance[i] << ", путь: ";
@@ -142,11 +142,10 @@ int main()
         }
         cout << endl;
     }
-    delete index;
-    delete indexLinks;
-    delete distance;
-    delete parent;
-    delete path;
+    delete[] index;
+    delete[] indexAfterSort;
+    delete[] distance;
+    delete[] parent;
+    delete[] path;
     return 0;
 }
-

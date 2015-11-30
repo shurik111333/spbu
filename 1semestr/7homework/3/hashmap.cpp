@@ -1,5 +1,5 @@
-#include <bst.h>
-#include <myString.h>
+#include "bst.h"
+#include "myString.h"
 #include <algorithm>
 
 struct Hashmap
@@ -14,8 +14,11 @@ struct Hashmap
     Hashmap(int size)
     {
         array = getNewBSTArray(size);
-        this->size = emptySpaces = size;
-        countElements = maxChainIndex = averageLengthOfChain = 0;
+        this->size = size;
+        emptySpaces = size;
+        countElements = 0;
+        maxChainIndex = 0;
+        averageLengthOfChain = 0;
     }
 };
 
@@ -59,7 +62,7 @@ void increaseMap(Hashmap *&map)
         while (currentValue)
         {
             int count = getCount(map->array[i], currentValue);
-            unsigned long long hash = getHash(currentValue);
+            int hash = getHash(currentValue);
             hash %= newMap->size;
             addToMap(newMap, currentValue, count);
             remove(map->array[i], currentValue);
@@ -116,9 +119,9 @@ void updateAverageLengthOfChain(Hashmap *map, int hash)
         map->averageLengthOfChain = map->averageLengthOfChain + 1.0 / getOccupiedCount(map);
 }
 
-void addToMap(Hashmap *&map, String *string)
+bool addToMap(Hashmap *&map, String *string)
 {
-    unsigned long long hash = getHash(string);
+    int hash = getHash(string);
     hash %= map->size;
     if (getSize(map->array[hash]) == 0)
         map->emptySpaces--;
@@ -126,10 +129,12 @@ void addToMap(Hashmap *&map, String *string)
     {
         map->countElements++;
         updateAverageLengthOfChain(map, hash);
+        updateMaxLengthOfChain(map, hash);
+        if (getLoadFactor(map) > maxLoadFactor && map->size < maxSize)
+            increaseMap(map);
+        return true;
     }
-    updateMaxLengthOfChain(map, hash);
-    if (getLoadFactor(map) > maxLoadFactor && map->size < maxSize)
-        increaseMap(map);
+    return false;
 }
 
 void addToMap(Hashmap *&map, String *string, int count)
@@ -137,7 +142,7 @@ void addToMap(Hashmap *&map, String *string, int count)
     if (count > 0)
     {
         addToMap(map, string);
-        unsigned long long hash = getHash(string);
+        int hash = getHash(string);
         hash %= map->size;
         addToBST(map->array[hash], string, count - 1);
     }
@@ -156,5 +161,6 @@ void removeMap(Hashmap *map)
     {
         removeTree(map->array[i]);
     }
+    delete[] map->array;
     delete map;
 }

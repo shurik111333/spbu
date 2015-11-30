@@ -1,12 +1,12 @@
 #pragma once
 
-#include <myString.h>
+#include "myString.h"
 
 struct Hashmap;
 
 Hashmap *getNewHashmap(int size);
 
-void addToMap(Hashmap *&map, String *string);
+bool addToMap(Hashmap *&map, String *string);
 
 bool findInMap(Hashmap *map, String *string);
 

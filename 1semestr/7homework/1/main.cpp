@@ -53,6 +53,7 @@ int main()
             cout << "вариант " << version << endl;
         }
     }
+    delete[] students;
     return 0;
 }
 

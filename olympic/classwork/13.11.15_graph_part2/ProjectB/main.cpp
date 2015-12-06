@@ -5,10 +5,10 @@
 using namespace std;
 
 int first[210000] = {}, next1[410000] = {}, val[410000] = {};
-int used[210000] = {}, path[210000] = {};
+int used[210000] = {}, pow[210000] = {}, topSort[210000] = {};
 int countVal = 0;
 bool isFind = false;
-ofstream fout("cycle.out");
+ofstream fout("topsort.out");
 
 void add(int a, int b)
 {
@@ -25,8 +25,6 @@ void add(int a, int b)
 
 void dfs(int v)
 {
-    path[0]++;
-    path[path[0]] = v;
     used[v] = 1;
     int k = first[v];
     while (k != 0)
@@ -38,30 +36,17 @@ void dfs(int v)
         if (used[val[k]] == 1)
         {
             isFind = true;
-            fout << "YES\n";
-            /*for (int i = path[0]; i > 0; i--)
-            {
-                fout << path[i] << " ";
-                if (path[i] == val[k])
-                    break;
-            }*/
-            int ind = path[0];
-            while (path[ind] != val[k])
-                ind--;
-            for (int i = ind; i <= path[0]; i++)
-            {
-                fout << path[i] << " ";
-            }
+            return;
         }
         k = next1[k];
     }
     used[v] = 2;
-    path[0]--;
+    topSort[++topSort[0]] = v;
 }
 
 int main()
 {
-    ifstream fin("cycle.in");
+    ifstream fin("topsort.in");
     fout.sync_with_stdio(false);
     int n = 0, m = 0;
     fin >> n >> m;
@@ -69,16 +54,22 @@ int main()
     {
         int a = 0, b = 0;
         fin >> a >> b;
+        pow[b]++;
         add(a, b);
     }
     for (int i = 1; i <= n; i++)
     {
         if (used[i] == 0)
             dfs(i);
-        if (isFind)
-            break;
     }
-    if (!isFind)
-        fout << "NO";
+    if (isFind)
+        fout << -1;
+    else
+    {
+        for (int i = topSort[0]; i > 0; i--)
+        {
+            fout << topSort[i] << " ";
+        }
+    }
     return 0;
 }

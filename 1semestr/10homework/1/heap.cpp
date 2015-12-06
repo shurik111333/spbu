@@ -1,18 +1,5 @@
 #include "tree.h"
 
-/*struct HeapNode
-{
-    int value;
-    HeapNode *left;
-    HeapNode *right;
-    HeapNode *parent;
-    HeapNode *previous;
-    HeapNode *next;
-    HeapNode(int value, HeapNode *left = nullptr, HeapNode *right = nullptr, HeapNode *parent = nullptr, HeapNode next = nullptr)
-        :value(value), left(left), right(right), parent(parent), next(next)
-    {}
-};*/
-
 const int defaultSize = 10;
 
 struct Heap
@@ -20,8 +7,6 @@ struct Heap
     int size;
     int count;
     Tree **heap;
-    /*HeapNode *root;
-    HeapNode *end;*/
 
     Heap(int size = defaultSize)
         :size(size), count(0), heap(new Tree*[size])
@@ -112,4 +97,10 @@ Tree *getMin(Heap *heap)
     swap(heap->heap[0], heap->heap[--heap->count]);
     heapify(1, heap);
     return heap->heap[heap->count];
+}
+
+void deleteHeap(Heap *heap)
+{
+    delete[] heap->heap;
+    delete heap;
 }

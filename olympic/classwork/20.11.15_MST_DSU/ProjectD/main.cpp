@@ -9,23 +9,21 @@ struct Edge
 {
     int a;
     int b;
-    int weight;
 
     Edge()
     {
-        a = b = weight = 0;
+        a = b = 0;
     }
 
-    Edge(int a, int b, int weight)
+    Edge(int a, int b)
     {
         this->a = a;
         this->b = b;
-        this->weight = weight;
     }
 };
 
-int p[21000] = {};
-int r[21000] = {};
+int p[51000] = {};
+int r[51000] = {};
 
 
 double dist(int x1, int y1, int x2, int y2)
@@ -33,7 +31,7 @@ double dist(int x1, int y1, int x2, int y2)
     return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
 }
 
-void qSort(int left, int right, Edge edges[])
+/*void qSort(int left, int right, Edge edges[])
 {
     int l = left;
     int r = right;
@@ -55,6 +53,15 @@ void qSort(int left, int right, Edge edges[])
         qSort(l, right, edges);
     if (left < r)
         qSort(left, r, edges);
+}*/
+
+void init(int n)
+{
+    for (int i = 0; i <= n; i++)
+    {
+        r[i] = 1;
+        p[i] = i;
+    }
 }
 
 int parent(int v)
@@ -81,11 +88,50 @@ void merge(int v, int u)
 
 int main()
 {
-    ifstream fin("spantree2.in");
-    ofstream fout("spantree2.out");
-    int n = 0, m = 0;
-    fin >> n >> m;
-
+    ifstream fin("cutting.in");
+    ofstream fout("cutting.out");
+    int n = 0, m = 0, k = 0;
+    fin >> n >> m >> k;
+    for (int i = 0; i < m; i++)
+    {
+        int a, b;
+        fin >> a >> b;
+    }
+    init(n);
+    int op[151000] = {};
+    Edge edges[151000] = {};
+    for (int i = 0; i < k; i++)
+    {
+        char command[5] = {};
+        int a, b;
+        fin >> command >> a >> b;
+        edges[i] = Edge(a, b);
+        op[i] = command[0] - 'a';
+    }
+    for (int i = k - 1; i >= 0; i--)
+    {
+        if (op[i] == 0)
+        {
+            op[i] = parent(edges[i].a) == parent(edges[i].b);
+        }
+        else
+        {
+            op[i] = -1;
+            if (parent(edges[i].a) != parent(edges[i].b))
+                merge(edges[i].a, edges[i].b);
+        }
+    }
+    for (int i = 0; i < k; i++)
+    {
+        if (op[i] != -1)
+        {
+            if (op[i] != 0)
+                fout << "YES";
+            else
+                fout << "NO";
+            fout << "\n";
+        }
+    }
     return 0;
 }
 

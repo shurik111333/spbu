@@ -17,7 +17,7 @@ public:
     }
     void push(T value)
     {
-        StackElement *newElement = StackElement(value, this->top);
+        StackElement *newElement = new StackElement(value, this->top);
         this->top = newElement;
     }
     T pop()
@@ -29,7 +29,7 @@ public:
         delete elementForDelete;
         return result;
     }
-    T top() const
+    T getTop() const
     {
         return this->top->getValue();
     }
@@ -56,5 +56,5 @@ private:
         T value;
         StackElement *next;
     };
-    StackElement *Top;
+    StackElement *top;
 };

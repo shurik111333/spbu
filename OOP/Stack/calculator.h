@@ -5,13 +5,13 @@
 class Calculator
 {
 private:
-    Stack *stack;
+    Stack<int> *stack;
 public:
     Calculator();
     ~Calculator();
     void add();
     void subtract();
-    coid multiply();
+    void multiply();
     void divide();
     void push(int value);
     int result() const;

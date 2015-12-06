@@ -2,7 +2,7 @@
 
 Calculator::Calculator()
 {
-    stack = new Stack();
+    stack = new Stack<int>();
 }
 
 Calculator::~Calculator()
@@ -15,9 +15,11 @@ void Calculator::add()
     stack->push(stack->pop() + stack->pop());
 }
 
-void Calculator::substract()
+void Calculator::subtract()
 {
-    stack->push(stack->pop() - stack->pop());
+    int num1 = stack->pop();
+    int num2 = stack->pop();
+    stack->push(num2 - num1);
 }
 
 void Calculator::multiply()
@@ -27,7 +29,9 @@ void Calculator::multiply()
 
 void Calculator::divide()
 {
-    stack->push(stack->pop() / stack->pop());
+    int num1 = stack->pop();
+    int num2 = stack->pop();
+    stack->push(num2 / num1);
 }
 
 void Calculator::push(int value)
@@ -37,5 +41,5 @@ void Calculator::push(int value)
 
 int Calculator::result() const
 {
-    return stack->top();
+    return stack->getTop();
 }

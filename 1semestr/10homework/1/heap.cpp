@@ -23,8 +23,6 @@ Heap *getNewHeap(int size)
     return new Heap(size);
 }
 
-//void add(HeapNode *&node, )
-
 template <typename T>
 void swap(T &a, T &b)
 {
@@ -70,12 +68,13 @@ void heapify(int vertex, Heap *heap)
 
 void increaseHeap(Heap *heap)
 {
-    Tree **newHeap = new Tree*[heap->size * 2];
+    heap->size *= 2;
+    Tree **newHeap = new Tree*[heap->size];
     for (int i = 0; i < heap->count; i++)
     {
         newHeap[i] = heap->heap[i];
     }
-    delete heap->heap;
+    delete[] heap->heap;
     heap->heap = newHeap;
 }
 

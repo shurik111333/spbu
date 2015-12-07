@@ -1,0 +1,7 @@
+﻿http://habrahabr.ru/post/68341/ - небольшой гайд по ветками Git
+
+http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/ru/pr02.html - вроде неплохой справочник, написано норм(полностью не читал)
+
+http://habrahabr.ru/post/268951/ - довольно подробная статья про Git(не читал)
+
+http://www.alexkras.com/getting-started-with-git/ - Git Cheat Sheet(шпаргалка) - там немного более продвинутые команды, без совсем базовых

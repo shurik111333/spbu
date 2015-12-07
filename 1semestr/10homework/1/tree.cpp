@@ -79,6 +79,16 @@ char **getCodes(Tree *tree)
     return codes;
 }
 
+void writeValue(char value, std::ostream &out)
+{
+    out << '\"';
+    if (value == '\n')
+        out << "\\n";
+    else
+        out << value;
+    out << "\" ";
+}
+
 void writeTree(TreeNode *node, std::ostream &out)
 {
     if (node == nullptr)
@@ -88,13 +98,13 @@ void writeTree(TreeNode *node, std::ostream &out)
     out << node->code << " ";
     if (node->isLetter)
     {
-        out << "\"" << node->value << "\" ";
+        writeValue(node->value, out);
         return;
     }
-    out << "(";
+    out << '(';
     writeTree(node->left, out);
     writeTree(node->right, out);
-    out << ")";
+    out << ')';
 
 }
 

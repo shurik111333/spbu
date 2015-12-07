@@ -133,6 +133,20 @@ int height(TreeNode *node)
     return node == nullptr ? 0 : node->height;
 }
 
+char getValue(FILE *file)
+{
+    char c = getc(file);
+    if (c != '\\')
+        return c;
+    char next = getc(file);
+    if (next == '"')
+    {
+        ungetc(next, file);
+        return c;
+    }
+    return '\n';
+}
+
 TreeNode *getNode(FILE *file)
 {
     TreeNode *node = new TreeNode();
@@ -152,7 +166,7 @@ TreeNode *getNode(FILE *file)
     else
     {
         node->isLetter = true;
-        node->value = getc(file);
+        node->value = getValue(file);
         node->left = nullptr;
         node->right = nullptr;
         getc(file);

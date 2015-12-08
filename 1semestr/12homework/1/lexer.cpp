@@ -1,11 +1,10 @@
 #include "lexer.h"
 #include <cstring>
+#include <cctype>
 
-//bool Lexer::isFinishState = {false, false, true, false, true, false, false, true};
+//private----------------------------------------//
 
-//const bool isFinishState[] = {false, false, true, false, true, false, false, true};
-
-/*enum State
+enum State
 {
     startState,
     numberSignState,
@@ -15,20 +14,7 @@
     exponentSymbolState,
     exponentSignState,
     exponentState
-};*/
-
-Lexer::Lexer()
-    :length(0), string(nullptr), index(0)
-{}
-
-Lexer::Lexer(const char *string)
-{
-    length = strlen(string);
-    this->string = new char[length + 1];
-    strcpy(this->string, string);
-    this->string[length] = '\0';
-    index = 0;
-}
+};
 
 bool Lexer::isSpace(const char symbol)
 {
@@ -43,14 +29,122 @@ void Lexer::skipSpaces()
     }
 }
 
-void Lexer::init()
+bool Lexer::isSign(const char symbol)
 {
-    index = 0;
+    return (symbol =='+' || symbol == '-' || symbol == '*' || symbol == '/');
 }
 
 bool Lexer::isNumber()
 {
-    return true;
+    bool isInNumber = true;
+    int newIndex = index - 1;
+    State state = startState;
+    while (isInNumber)
+    {
+        char c = this->string[++newIndex];
+        switch (state)
+        {
+        case startState:
+        {
+            if (isdigit(c))
+            {
+                state = integerState;
+                break;
+            }
+            isInNumber = false;
+            break;
+        }
+        case integerState:
+        {
+            if (isdigit(c))
+                break;
+            if (c == point)
+            {
+                state = pointState;
+                break;
+            }
+            if (c == exp)
+            {
+                state = exponentSymbolState;
+                break;
+            }
+            isInNumber = false;
+            break;
+        }
+        case pointState:
+        {
+            if (isdigit(c))
+                state = decimalState;
+            else
+                isInNumber = false;
+            break;
+        }
+        case decimalState:
+        {
+            if (isdigit(c))
+                break;
+            if (c == exp)
+            {
+                state = exponentSymbolState;
+                break;
+            }
+            isInNumber = false;
+            break;
+        }
+        case exponentSymbolState:
+        {
+            if (c == '+' || c == '-')
+            {
+                state = exponentSignState;
+                break;
+            }
+            if (isdigit(c))
+            {
+                state = exponentState;
+                break;
+            }
+            isInNumber = false;
+            break;
+        }
+        case exponentSignState:
+        {
+            if (isdigit(c))
+                state = exponentState;
+            else
+                isInNumber = false;
+            break;
+        }
+        case exponentState:
+        {
+            if (!isdigit(c))
+                isInNumber = false;
+            break;
+        }
+        }
+    }
+    if (isFinishState[state])
+        index = newIndex;
+    return isFinishState[state];
+}
+
+//public-----------------------------------------//
+
+Lexer::Lexer()
+    :length(0), string(nullptr), index(0)
+{}
+
+Lexer::Lexer(const char *string)
+{
+    length = strlen(string);
+    this->string = new char[length + 1];
+    strcpy(this->string, string);
+    this->string[length] = '\0';
+    index = 0;
+}
+
+void Lexer::init()
+{
+    index = 0;
 }
 
 Lexer::Token Lexer::next()
@@ -60,20 +154,8 @@ Lexer::Token Lexer::next()
         return empty;
     if (isNumber())
         return Lexer::number;
-    switch(this->string[index++])
-    {
-    case '+':
-        return plus;
-    case '-':
-        return minus;
-    case '*':
-        return multiply;
-    case '/':
-        return divide;
-    default:
-    {
-        index--;
-        return error;
-    }
-    }
+    if (isSign(this->string[index++]))
+        return (Token)this->string[index - 1];
+    else
+        return Lexer::error;
 }

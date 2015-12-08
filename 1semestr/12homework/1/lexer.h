@@ -12,6 +12,8 @@ private:
 
     static bool isSpace(const char symbol);
 
+    static bool isSign(const char symbol);
+
     void skipSpaces();
 
     bool isNumber();
@@ -22,10 +24,10 @@ public:
     {
         empty,
         number,
-        plus,
-        minus,
-        multiply,
-        divide,
+        plus = '+',
+        minus = '-',
+        multiply = '*',
+        divide = '/',
         error
     };
 

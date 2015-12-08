@@ -54,6 +54,7 @@ bool isCorrect(char number[])
                 state = integerState;
             else
                 return false;
+            break;
         }
         case integerState:
         {
@@ -77,6 +78,7 @@ bool isCorrect(char number[])
                 state = decimalState;
             else
                 return false;
+            break;
         }
         case decimalState:
         {
@@ -109,6 +111,7 @@ bool isCorrect(char number[])
                 state = exponentState;
             else
                 return false;
+            break;
         }
         case exponentState:
         {

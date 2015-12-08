@@ -11,3 +11,5 @@ http://www.alexkras.com/getting-started-with-git/ - Git Cheat Sheet(шпарга
 http://pr0git.blogspot.ru/p/blog-page.html - хороший блог, довольно понятно написано
 
 http://pr0git.blogspot.ru/p/git.html - еще одна хорошая шпаргалка
+
+http://uleming.github.io/gitbook/index.html - не читал

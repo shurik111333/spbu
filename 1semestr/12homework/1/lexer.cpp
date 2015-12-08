@@ -7,7 +7,6 @@
 enum State
 {
     startState,
-    numberSignState,
     integerState,
     pointState,
     decimalState,

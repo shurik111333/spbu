@@ -2,22 +2,6 @@
 
 class Lexer
 {
-private:
-    int length;
-    char *string;
-    int index;
-
-    const bool isFinishState[8] = {false, false, true, false, true, false, false, true};
-    const char point = '.', exp = 'E';
-
-    static bool isSpace(const char symbol);
-
-    static bool isSign(const char symbol);
-
-    void skipSpaces();
-
-    bool isNumber();
-
 public:
 
     enum Token
@@ -35,7 +19,24 @@ public:
 
     Lexer(const char *string);
 
-    void init();
+    ~Lexer();
 
     Token next();
+
+    Token lookAhead();
+
+    static bool isSign(Token token);
+
+private:
+
+    int length;
+    int index;
+    char *string;
+
+    static bool isSign(const char symbol);
+
+    void skipSpaces();
+
+    bool isNumber();
+
 };

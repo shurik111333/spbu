@@ -1,6 +1,6 @@
-#include "lexer.h"
 #include <cstring>
 #include <cctype>
+#include "lexer.h"
 
 //private----------------------------------------//
 
@@ -15,7 +15,7 @@ enum State
     exponentState
 };
 
-bool Lexer::isSpace(const char symbol)
+bool isSpace(const char symbol)
 {
     return (symbol == ' ' || symbol == '\t' || symbol == '\n');
 }
@@ -32,6 +32,9 @@ bool Lexer::isSign(const char symbol)
 {
     return (symbol =='+' || symbol == '-' || symbol == '*' || symbol == '/');
 }
+
+const bool isFinishState[] = {false, true, false, true, false, false, true};
+const char point = '.', exp = 'E';
 
 bool Lexer::isNumber()
 {
@@ -129,7 +132,7 @@ bool Lexer::isNumber()
 //public-----------------------------------------//
 
 Lexer::Lexer()
-    :length(0), string(nullptr), index(0)
+    :length(0), index(0), string(nullptr)
 {}
 
 Lexer::Lexer(const char *string)
@@ -141,9 +144,9 @@ Lexer::Lexer(const char *string)
     index = 0;
 }
 
-void Lexer::init()
+Lexer::~Lexer()
 {
-    index = 0;
+    delete[] string;
 }
 
 Lexer::Token Lexer::next()
@@ -157,4 +160,17 @@ Lexer::Token Lexer::next()
         return (Token)this->string[index - 1];
     else
         return Lexer::error;
+}
+
+Lexer::Token Lexer::lookAhead()
+{
+    int oldIndex = index;
+    Token result = this->next();
+    index = oldIndex;
+    return result;
+}
+
+bool Lexer::isSign(Token token)
+{
+    return (token == plus || token == minus || token == multiply || token == divide);
 }

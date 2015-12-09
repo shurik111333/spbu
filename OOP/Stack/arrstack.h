@@ -1,5 +1,2 @@
-#ifndef ARRSTACK
-#define ARRSTACK
-
-#endif // ARRSTACK
+#pragma once
 

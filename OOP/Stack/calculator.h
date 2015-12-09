@@ -1,13 +1,15 @@
 #pragma once
 
-#include <stack.h>
+#include "stack.h"
+#include "istack.h"
 
 class Calculator
 {
 private:
-    Stack<int> *stack;
+    IStack<int> &stack;
 public:
-    Calculator();
+    //Calculator();
+    Calculator(IStack<int> &stack);
     ~Calculator();
     void add();
     void subtract();

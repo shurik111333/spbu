@@ -1,45 +1,45 @@
-#include <calculator.h>
+#include "calculator.h"
+#include "istack.h"
 
-Calculator::Calculator()
-{
-    stack = new Stack<int>();
-}
+Calculator::Calculator(IStack<int> &stack)
+    :stack(stack)
+{}
 
 Calculator::~Calculator()
 {
-    delete stack;
+    //delete stack;
 }
 
 void Calculator::add()
 {
-    stack->push(stack->pop() + stack->pop());
+    stack.push(stack.pop() + stack.pop());
 }
 
 void Calculator::subtract()
 {
-    int num1 = stack->pop();
-    int num2 = stack->pop();
-    stack->push(num2 - num1);
+    int num1 = stack.pop();
+    int num2 = stack.pop();
+    stack.push(num2 - num1);
 }
 
 void Calculator::multiply()
 {
-    stack->push(stack->pop() * stack->pop());
+    stack.push(stack.pop() * stack.pop());
 }
 
 void Calculator::divide()
 {
-    int num1 = stack->pop();
-    int num2 = stack->pop();
-    stack->push(num2 / num1);
+    int num1 = stack.pop();
+    int num2 = stack.pop();
+    stack.push(num2 / num1);
 }
 
 void Calculator::push(int value)
 {
-    stack->push(value);
+    stack.push(value);
 }
 
 int Calculator::result() const
 {
-    return stack->getTop();
+    return stack.getTop();
 }

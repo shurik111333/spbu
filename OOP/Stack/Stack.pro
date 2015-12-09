@@ -5,9 +5,12 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     calculator.cpp \
-    stack.cpp
+    stack.cpp \
+    arrstack.cpp
 
 HEADERS += \
     calculator.h \
-    stack.h
+    stack.h \
+    arrstack.h \
+    istack.h
 

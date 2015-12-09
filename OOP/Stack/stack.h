@@ -1,7 +1,9 @@
 #pragma once
 
+#include "istack.h"
+
 template <typename T>
-class Stack
+class Stack : public IStack<T>
 {
 public:
     Stack()
@@ -57,4 +59,59 @@ private:
         StackElement *next;
     };
     StackElement *top;
+};
+
+template <typename T>
+class StackArray : public IStack<T>
+{
+private:
+    T *array;
+    int size;
+    int top;
+
+    const static int defaultSize = 10;
+
+    void increaseStack()
+    {
+        int newSize = size * 2;
+        T *newArray = new T[newSize];
+        for (int i = 0; i < size; i++)
+        {
+            newArray[i] = array[i];
+        }
+        size = newSize;
+        delete[] array;
+        array = newArray;
+    }
+
+public:
+
+    StackArray(int size = defaultSize)
+    {
+        this->size = size;
+        this->array = new T[this->size];
+        this->top = 0;
+    }
+
+    ~StackArray()
+    {
+        delete[] array;
+    }
+
+    void push(T value)
+    {
+        if (top >= size)
+            increaseStack();
+        array[top++] = value;
+    }
+
+    T pop()
+    {
+        return array[--top];
+    }
+
+    T getTop() const
+    {
+        return array[top - 1];
+    }
 };

@@ -65,9 +65,9 @@ ReadMe.txt
 *.unsuccessfulbuild
 *.ipch
 *.config
-*/bin/*
-*/obj/*
-*/Backup*
+**/bin
+**/obj
+**/Backup*
 
 
 #Other

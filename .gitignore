@@ -44,7 +44,6 @@ Temporary Items
 
 #MS Visual Studio trash
 *.sdf
-*.sln
 *.suo
 *.vcxproj
 *.filters

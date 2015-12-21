@@ -45,7 +45,6 @@ Temporary Items
 
 #MS Visual Studio trash
 *.sdf
-*.sln
 *.suo
 *.vcxproj
 *.filters
@@ -59,6 +58,7 @@ Temporary Items
 targetver.h
 stdafx.cpp
 stdafx.h
+*[Tt]emporary*
 *.ilk
 *.pch
 ReadMe.txt

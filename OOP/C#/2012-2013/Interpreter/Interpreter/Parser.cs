@@ -54,52 +54,15 @@ namespace Interpreter
 
         private static Nodes.Statement StatementList()
         {
-            //List<int> list = new List<int>();
-            /*Nodes.StatementList StatementList = new Nodes.StatementList();
-            StatementList.Statements.Add(Statement());
-            Nodes.Statement currStatement;
-            while (Lexer.LookAhead().LexType != Lexer.LexType.EOF)
+            Nodes.Statement CurrStatement = Statement();
+            Nodes.Statement PrevStatement = CurrStatement.Tail;
+            Nodes.Statement FirstStatement = CurrStatement.Head;
+            CurrStatement = Statement();
+            while (CurrStatement != null)
             {
-                currStatement = Statement();
-                if (currStatement == null)
-                {
-                    ErrorList.Add(new Error(ParserException.IncorrectStatement, Lexer.LookBack().EndCoords));
-                }
-                else
-                    StatementList.Statements.Add(currStatement);
-            }
-            return StatementList;*/
-            /*Statements = new List<Nodes.Statement>();
-
-            
-
-            while (Lexer.LookAhead().LexType != Lexer.LexType.EOF)
-                if (Statement() == null)
-                    ErrorList.Add(new Error(ParserException.IncorrectStatement, Lexer.LookBack().EndCoords));
-
-            Nodes.Statement[] arrayOfStatements = Statements.ToArray();
-
-            for (int i = 0; i < Statements.Count - 1; i++)
-            {
-                if (arrayOfStatements[i].Next == null)
-                    arrayOfStatements[i].Next = arrayOfStatements[i + 1];
-            }*/
-
-            Nodes.Statement PrevStatement = null, CurrStatement = null, FirstStatement = null;
-
-            while (Lexer.LookAhead().LexType != Lexer.LexType.EOF)
-            {
-                CurrStatement = Statement();
-                if (CurrStatement == null)
-                    break;
-                if (PrevStatement == null)
-                    FirstStatement = CurrStatement.Head;
-                else
-                {
-                    PrevStatement.Next = CurrStatement.Head;
-                }
-
+                PrevStatement.Next = CurrStatement.Head;
                 PrevStatement = CurrStatement.Tail;
+                CurrStatement = Statement();
             }
             return FirstStatement;
         }
@@ -415,6 +378,8 @@ namespace Interpreter
                     condition = Nodes.Condition.CompareSign.NotEqual;
                     break;
                 default:
+                    if (currLexem.LexType != Lexer.LexType.EOF)
+                        Lexer.RollBack();
                     ErrorList.Add(new Error(ParserException.IncorrectCondition, Lexer.LookBack().EndCoords));
                     condition = Nodes.Condition.CompareSign.Error;
                     break;

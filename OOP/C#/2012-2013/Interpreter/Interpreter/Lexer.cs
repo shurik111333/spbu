@@ -23,9 +23,10 @@ namespace Interpreter
 
             public static Nodes.Node.Coords Coords
             {
-                private set;
+                private set
+                {}
 
-                public get
+                get
                 {
                     return ArrayOfLexems[position].Coords;
                 }
@@ -438,11 +439,9 @@ namespace Interpreter
 
             private static Lexem GetVar()
             {
-                //StringBuilder result = new StringBuilder(string.Empty);
                 int positionOfVar = position;
                 while (positionOfVar < expression.Length && (letters.Contains(expression[positionOfVar]) || digits.Contains(expression[positionOfVar]) || expression[positionOfVar] == Underline))
                 {
-                    //result.Append(expression[positionOfVar]);
                     positionOfVar++;
                 }
                 string result = expression.Substring(position, positionOfVar - position);

@@ -436,18 +436,18 @@ namespace Interpreter
                 }
             }*/
 
-            private static Lexem GetVar(bool goToNext = true)
+            private static Lexem GetVar()
             {
-                StringBuilder result = new StringBuilder(string.Empty);
+                //StringBuilder result = new StringBuilder(string.Empty);
                 int positionOfVar = position;
                 while (positionOfVar < expression.Length && (letters.Contains(expression[positionOfVar]) || digits.Contains(expression[positionOfVar]) || expression[positionOfVar] == Underline))
                 {
-                    result.Append(expression[positionOfVar]);
+                    //result.Append(expression[positionOfVar]);
                     positionOfVar++;
                 }
-                if (goToNext)
-                    position = positionOfVar - 1;
-                switch (result.ToString())
+                string result = expression.Substring(position, positionOfVar - position);
+                position = positionOfVar - 1;
+                switch (result)
                 {
                     case If:
                         return new Lexem(LexType.If);
@@ -462,7 +462,7 @@ namespace Interpreter
                     case GoTo:
                         return new Lexem(LexType.GoTo);
                     default:
-                        return new Lexem(result.ToString());
+                        return new Lexem(result);
                 }
             }
 

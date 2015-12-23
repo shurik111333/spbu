@@ -35,6 +35,7 @@ namespace Interpreter
             private static int x;
             private static int y;
 
+            private static int prevPosition;
             private static int position;
 
             private static Lexem[] ArrayOfLexems;
@@ -96,7 +97,7 @@ namespace Interpreter
 
                 private static Nodes.Node.Coords GetEndCoords(Nodes.Node.Coords startCoords)
                 {
-                    return new Nodes.Node.Coords(position - startCoords.X + 1, startCoords.Y);
+                    return new Nodes.Node.Coords(startCoords.X + position - prevPosition, startCoords.Y);
                 }
 
                 public Lexem(LexType type)
@@ -265,7 +266,7 @@ namespace Interpreter
                     return new Lexem(LexType.EOF);
                 }
                 SkipSpaces();
-                int start = position;
+                prevPosition = position;
                 Lexem result = default(Lexem);
                 switch (expression[position])
                 {
@@ -357,7 +358,7 @@ namespace Interpreter
                         }
                         else
                         {
-                            position = start;
+                            position--;
                             result = new Lexem(LexType.Lower);
                         }
                         break;
@@ -397,7 +398,7 @@ namespace Interpreter
                         break;
                 }
                 position++;
-                x += position - start;
+                x += position - prevPosition;
                 return result;
             }
 

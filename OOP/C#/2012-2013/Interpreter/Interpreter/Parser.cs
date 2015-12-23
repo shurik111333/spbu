@@ -34,7 +34,8 @@ namespace Interpreter
                 throw new ArgumentNullException("expression");
             }
             ErrorList = new List<Error>();
-            Lexer lexer = new Lexer(expression);
+            //Lexer lexer = new Lexer(expression);
+            Lexer.Init(expression);
             Nodes.Statement FirstStatement;
             Memory.Labels = new Dictionary<string, Nodes.Statement>();
             try
@@ -130,7 +131,8 @@ namespace Interpreter
 
         private static Nodes.GoTo GoTo()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            //Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.Coords.X, Lexer.Y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             if (Lexer.LookAhead().LexType != Lexer.LexType.GoTo)
                 return null;
 
@@ -160,7 +162,7 @@ namespace Interpreter
 
         private static Nodes.While While()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             if (Lexer.LookAhead().LexType != Lexer.LexType.While)
                 return null;
 
@@ -198,7 +200,7 @@ namespace Interpreter
 
         private static Nodes.Print Print()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             if (Lexer.LookAhead().LexType != Lexer.LexType.Print)
                 return null;
 
@@ -236,7 +238,7 @@ namespace Interpreter
 
         private static Nodes.For For()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             if (Lexer.LookAhead().LexType != Lexer.LexType.For)
             {
                 return null;
@@ -300,7 +302,7 @@ namespace Interpreter
 
         private static Nodes.If If()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             if (Lexer.LookAhead().LexType != Lexer.LexType.If)
             {
                 return null;
@@ -353,7 +355,7 @@ namespace Interpreter
 
         private static Nodes.Condition Condition()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             Nodes.Expression left = Expr();
             Lexer.Lexem currLexem = Lexer.NextLexem();
             Nodes.Condition.CompareSign condition;
@@ -438,7 +440,7 @@ namespace Interpreter
 
         private static Nodes.Assignment Assignment()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             if (Lexer.LookAhead().LexType != Lexer.LexType.Variable)
                 return null;
             Lexer.Lexem currLexem = Lexer.NextLexem();
@@ -525,7 +527,7 @@ namespace Interpreter
 
         private static Nodes.Expression Expr()
         {
-            Nodes.Node.Coords coords = new Nodes.Node.Coords(Lexer.x, Lexer.y);
+            Nodes.Node.Coords coords = Lexer.Coords;
             Nodes.Expression left = Term();
 
             while (Lexer.LookAhead().LexType == Lexer.LexType.Add || Lexer.LookAhead().LexType == Lexer.LexType.Minus)

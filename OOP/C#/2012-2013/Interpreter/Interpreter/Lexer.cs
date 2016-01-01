@@ -24,11 +24,22 @@ namespace Interpreter
             public static Nodes.Node.Coords Coords
             {
                 private set
-                {}
+                { }
 
                 get
                 {
                     return ArrayOfLexems[position].Coords;
+                }
+            }
+
+            private static char symbol
+            {
+                set 
+                { }
+
+                get
+                {
+                    return expression[position];
                 }
             }
 
@@ -268,7 +279,7 @@ namespace Interpreter
                 SkipSpaces();
                 prevPosition = position;
                 Lexem result = default(Lexem);
-                switch (expression[position])
+                switch (symbol)
                 {
                     case Add:
                         result = new Lexem(LexType.Add);
@@ -327,7 +338,7 @@ namespace Interpreter
                         break;
                     case Not:
                         position++;
-                        if (position < expression.Length && expression[position] == EqualSign)
+                        if (position < expression.Length && symbol == EqualSign)
                         {
                             result = new Lexem(LexType.NotEqual);
                         }
@@ -340,7 +351,7 @@ namespace Interpreter
                         break;
                     case Higher:
                         position++;
-                        if (position < expression.Length && expression[position] == EqualSign)
+                        if (position < expression.Length && symbol == EqualSign)
                         {
                             result = new Lexem(LexType.HighEqual);
                         }
@@ -352,7 +363,7 @@ namespace Interpreter
                         break;
                     case Lower:
                         position++;
-                        if (position < expression.Length && expression[position] == EqualSign)
+                        if (position < expression.Length && symbol == EqualSign)
                         {
                             result = new Lexem(LexType.LowEqual);
                         }
@@ -364,7 +375,7 @@ namespace Interpreter
                         break;
                     case Quote:
                         int newPos = position + 1;
-                        while (newPos < expression.Length && expression[newPos] != Quote && expression[position] != LineFeed)
+                        while (newPos < expression.Length && expression[newPos] != Quote && symbol != LineFeed)
                         {
                             newPos++;
                         }
@@ -375,19 +386,20 @@ namespace Interpreter
                         //return res;
                         break;
                     default:
-                        if (digits.Contains(expression[position]))
+
+                        if (digits.Contains(symbol))
                         {
                             result = new Lexem(GetNumber());
                             break;
                         }
-                        /*if (Spaces.Contains(expression[position]))
+                        /*if (Spaces.Contains(symbol))
                         {
                             start = position;
                             SkipSpaces();
                             result = GetLexem(goToNext);
                             return result;
                         }*/
-                        if (letters.Contains(expression[position]) || expression[position] == Underline)
+                        if (letters.Contains(symbol) || symbol == Underline)
                         {
                             result = GetVar();
                             break;
@@ -404,33 +416,31 @@ namespace Interpreter
 
             private static void SkipSpaces()
             {
-                while (position < expression.Length && Spaces.Contains(expression[position]))
+                while (position < expression.Length && Spaces.Contains(symbol))
                 {
-                    if (expression[position] == LineFeed)
+                    if (symbol == LineFeed)
                     {
                         y++;
-                        x = 1;
+                        x = 0;
                     }
-                    else
-                        if (expression[position] == Tab)
-                            x += 3;
-                        else
-                            x++;
+                    if (symbol == Tab)
+                        x += 2;
+                    x++;
                     position++;
                 }
             }
-
+    
             /*public static void SkipSpacesCoords()
             {
-                while (position < expression.Length && Spaces.Contains(expression[position]))
+                while (position < expression.Length && Spaces.Contains(symbol))
                 {
-                    if (expression[position] == LineFeed)
+                    if (symbol == LineFeed)
                     {
                         y++;
                         x = 1;
                     }
                     else
-                        if (expression[position] == Tab)
+                        if (symbol == Tab)
                             x += 3;
                         else
                             x++;
@@ -499,22 +509,21 @@ namespace Interpreter
             private static int GetEndOfNumber()
             {
                 ExponentParts currPart = ExponentParts.IntegerPart;
-                while (true)
+                while (position < expression.Length)
                 {
-                    position++;
                     switch (currPart)
                     {
                         case ExponentParts.IntegerPart:
                             if (position >= expression.Length)
                                 return position - 1;
-                            if (digits.Contains(expression[position]))
+                            if (digits.Contains(symbol))
                                 break;
-                            if (expression[position] == Comma)
+                            if (symbol == Comma)
                             {
                                 currPart = ExponentParts.Comma;
                                 break;
                             }
-                            if (expression[position] == Exp)
+                            if (symbol == Exp)
                             {
                                 currPart = ExponentParts.Exp;
                                 break;
@@ -526,7 +535,7 @@ namespace Interpreter
                                 Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                                 return position - 1;
                             }
-                            if (digits.Contains(expression[position]))
+                            if (digits.Contains(symbol))
                             {
                                 currPart = ExponentParts.FractionPart;
                                 break;
@@ -536,9 +545,9 @@ namespace Interpreter
                         case ExponentParts.FractionPart:
                             if (position >= expression.Length)
                                 return position - 1;
-                            if (digits.Contains(expression[position]))
+                            if (digits.Contains(symbol))
                                 break;
-                            if (expression[position] == Exp)
+                            if (symbol == Exp)
                             {
                                 currPart = ExponentParts.Exp;
                                 break;
@@ -551,12 +560,12 @@ namespace Interpreter
                                 Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                                 return position - 1;
                             }
-                            if (digits.Contains(expression[position]))
+                            if (digits.Contains(symbol))
                             {
                                 currPart = ExponentParts.Power;
                                 break;
                             }
-                            if (expression[position] == Add || expression[position] == Minus)
+                            if (symbol == Add || symbol == Minus)
                             {
                                 currPart = ExponentParts.Sign;
                                 break;
@@ -569,7 +578,7 @@ namespace Interpreter
                                 Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                                 return position - 1;
                             }
-                            if (digits.Contains(expression[position]))
+                            if (digits.Contains(symbol))
                             {
                                 currPart = ExponentParts.Power;
                                 break;
@@ -579,17 +588,19 @@ namespace Interpreter
                         case ExponentParts.Power:
                             if (position >= expression.Length || IsDelimiterNumber(position))
                                 return position - 1;
-                            if (digits.Contains(expression[position]))
+                            if (digits.Contains(symbol))
                                 break;
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                             return position;
                     }
+                    position++;
                 }
+                return position - 1;
             }
 
             private static bool IsDelimiterNumber(int position)
             {
-                return !(digits.Contains(expression[position]) || ExpNotation.Contains(expression[position]));
+                return !(digits.Contains(symbol) || ExpNotation.Contains(symbol));
             }
         }
     }

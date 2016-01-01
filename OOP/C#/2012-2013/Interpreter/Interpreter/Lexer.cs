@@ -23,9 +23,6 @@ namespace Interpreter
 
             public static Nodes.Node.Coords Coords
             {
-                private set
-                { }
-
                 get
                 {
                     return ArrayOfLexems[position].Coords;
@@ -34,9 +31,6 @@ namespace Interpreter
 
             private static char symbol
             {
-                set 
-                { }
-
                 get
                 {
                     return position < expression.Length ? expression[position] : EOF;

@@ -12,7 +12,7 @@ namespace Interpreter
         {
             public const char Add = '+', Minus = '-', Divide = '/', Multiply = '*', OpenBracket = '(', CloseBracket = ')', Space = ' ', Semicolon = ';', EqualSign = '=',
                               Underline = '_', OpenBlockBracket = '{', CloseBlockBracket = '}', Comma = ',', Not = '!', Higher = '>', Lower = '<', Quote = '"', LineFeed = '\n',
-                              Tab = '\t', Exp = 'E', Colon = ':', OpenSquadBracket = '[', CloseSquadBracket = ']';
+                              Tab = '\t', Exp = 'E', Colon = ':', OpenSquadBracket = '[', CloseSquadBracket = ']', EOF = '\0';
 
             public const string Degree = "**", Spaces = " \r\n\t", If = "if", Else = "else", For = "for", Print = "print", ExpNotation = "E,+-", While = "while",
                                 GoTo = "goto";
@@ -39,7 +39,7 @@ namespace Interpreter
 
                 get
                 {
-                    return expression[position];
+                    return position < expression.Length ? expression[position] : EOF;
                 }
             }
 
@@ -272,15 +272,14 @@ namespace Interpreter
 
             private static Lexem GetLexem(bool goToNext = true)
             {
-                if (position >= expression.Length)
-                {
-                    return new Lexem(LexType.EOF);
-                }
                 SkipSpaces();
                 prevPosition = position;
                 Lexem result = default(Lexem);
                 switch (symbol)
                 {
+                    case EOF:
+                        result = new Lexem(LexType.EOF);
+                        break;
                     case Add:
                         result = new Lexem(LexType.Add);
                         break;
@@ -288,13 +287,14 @@ namespace Interpreter
                         result = new Lexem(LexType.Minus);
                         break;
                     case Multiply:
-                        if (position + 1 < expression.Length && expression[position + 1] == Multiply)
-                        {
-                            position++;
+                        position++;
+                        if (symbol == Multiply)
+                        { 
                             result = new Lexem(LexType.Degree);
                         }
                         else
                         {
+                            position--;
                             result = new Lexem(LexType.Multiply);
                         }
                         break;
@@ -311,13 +311,14 @@ namespace Interpreter
                         result = new Lexem(LexType.Semicolon);
                         break;
                     case EqualSign:
-                        if (position + 1 < expression.Length && expression[position + 1] == EqualSign)
+                        position++;
+                        if (symbol == EqualSign)
                         {
-                            position++;
                             result = new Lexem(LexType.Equal);
                         }
                         else
                         {
+                            position--;
                             result = new Lexem(LexType.EqualSign);
                         }
                         break;
@@ -338,7 +339,7 @@ namespace Interpreter
                         break;
                     case Not:
                         position++;
-                        if (position < expression.Length && symbol == EqualSign)
+                        if (symbol == EqualSign)
                         {
                             result = new Lexem(LexType.NotEqual);
                         }
@@ -351,7 +352,7 @@ namespace Interpreter
                         break;
                     case Higher:
                         position++;
-                        if (position < expression.Length && symbol == EqualSign)
+                        if (symbol == EqualSign)
                         {
                             result = new Lexem(LexType.HighEqual);
                         }
@@ -363,7 +364,7 @@ namespace Interpreter
                         break;
                     case Lower:
                         position++;
-                        if (position < expression.Length && symbol == EqualSign)
+                        if (symbol == EqualSign)
                         {
                             result = new Lexem(LexType.LowEqual);
                         }
@@ -375,7 +376,7 @@ namespace Interpreter
                         break;
                     case Quote:
                         int newPos = position + 1;
-                        while (newPos < expression.Length && expression[newPos] != Quote && symbol != LineFeed)
+                        while (newPos < expression.Length && expression[newPos] != Quote && expression[newPos] != LineFeed)
                         {
                             newPos++;
                         }

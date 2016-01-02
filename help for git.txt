@@ -13,3 +13,5 @@ http://pr0git.blogspot.ru/p/blog-page.html - хороший блог, довол
 http://pr0git.blogspot.ru/p/git.html - еще одна хорошая шпаргалка
 
 http://uleming.github.io/gitbook/index.html - не читал
+
+http://stackoverflow.com/questions/1085162/commit-only-part-of-a-file-in-git - добавить в коммит только часть изменений в файле

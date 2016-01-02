@@ -37,11 +37,23 @@ namespace Interpreter
                 }
             }
 
+            private static int position
+            {
+                set
+                {
+                    pos = value;
+                }
+                get
+                {
+                    return pos;
+                }
+            }
+
             private static int x;
             private static int y;
 
             private static int prevPosition;
-            private static int position;
+            private static int pos;
 
             private static Lexem[] ArrayOfLexems;
 

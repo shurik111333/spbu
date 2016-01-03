@@ -164,12 +164,12 @@ namespace Interpreter
 
             private static void PushCoordinates()
             {
-                for (int i = startPosition + 1; i <= endPosition; i++)
+                for (int i = startPosition; i < endPosition; i++)
                 {
                     switch (GetSymbol(i))
                     {
                         case LineFeed:
-                            x = 0;
+                            x = 1;
                             y++;
                             break;
                         case Tab:

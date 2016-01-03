@@ -33,27 +33,17 @@ namespace Interpreter
             {
                 get
                 {
-                    return position < expression.Length ? expression[position] : EOF;
+                    return GetSymbol(endPosition);
                 }
             }
 
-            private static int position
-            {
-                set
-                {
-                    pos = value;
-                }
-                get
-                {
-                    return pos;
-                }
-            }
+            private static int position;
 
             private static int x;
             private static int y;
 
-            private static int prevPosition;
-            private static int pos;
+            private static int startPosition;
+            private static int endPosition;
 
             private static Lexem[] ArrayOfLexems;
 
@@ -64,6 +54,8 @@ namespace Interpreter
                 expression = expr;
                 x = 1;
                 y = 1;
+                startPosition = 0;
+                endPosition = 0;
                 MakeLexems();
                 position = 0;
             }
@@ -112,9 +104,16 @@ namespace Interpreter
                 public Nodes.Node.Coords Coords;
                 public Nodes.Node.Coords EndCoords;
 
-                private static Nodes.Node.Coords GetEndCoords(Nodes.Node.Coords startCoords)
+                private static Nodes.Node.Coords GetEndCoords()
                 {
-                    return new Nodes.Node.Coords(startCoords.X + position - prevPosition, startCoords.Y);
+                    PushCoordinates();
+                    return new Nodes.Node.Coords(x, y);
+                }
+
+                private static void SetCoords(ref Lexem lexem)
+                {
+                    lexem.Coords = new Nodes.Node.Coords(x, y);
+                    lexem.EndCoords = GetEndCoords();
                 }
 
                 public Lexem(LexType type)
@@ -122,8 +121,11 @@ namespace Interpreter
                     LexType = type;
                     Value = 0;
                     VarName = "";
-                    Coords = new Nodes.Node.Coords(x, y);
-                    EndCoords = GetEndCoords(Coords);
+                    Coords = default(Nodes.Node.Coords);
+                    EndCoords = default(Nodes.Node.Coords);
+                    SetCoords(ref this);
+                    /*Coords = new Nodes.Node.Coords(x, y);
+                    EndCoords = GetEndCoords(Coords);*/
                 }
 
                 public Lexem(float number)
@@ -131,8 +133,11 @@ namespace Interpreter
                     LexType = LexType.Number;
                     Value = number;
                     VarName = "";
-                    Coords = new Nodes.Node.Coords(x, y);
-                    EndCoords = GetEndCoords(Coords);
+                    Coords = default(Nodes.Node.Coords);
+                    EndCoords = default(Nodes.Node.Coords);
+                    SetCoords(ref this);
+                    //Coords = new Nodes.Node.Coords(x, y);
+                    //EndCoords = GetEndCoords(Coords);
                 }
 
                 public Lexem(string name)
@@ -140,8 +145,11 @@ namespace Interpreter
                     LexType = LexType.Variable;
                     Value = 0;
                     VarName = name;
-                    Coords = new Nodes.Node.Coords(x, y);
-                    EndCoords = GetEndCoords(Coords);
+                    Coords = default(Nodes.Node.Coords);
+                    EndCoords = default(Nodes.Node.Coords);
+                    SetCoords(ref this);
+                    //Coords = new Nodes.Node.Coords(x, y);
+                    // = GetEndCoords(Coords);
                 }
 
                 public Lexem(int start, int end)
@@ -149,24 +157,51 @@ namespace Interpreter
                     LexType = LexType.String;
                     Value = 0;
                     VarName = expression.Substring(start, end - start + 1);
-                    Coords = new Nodes.Node.Coords(x, y);
-                    EndCoords = GetEndCoords(Coords);
+                    Coords = default(Nodes.Node.Coords);
+                    EndCoords = default(Nodes.Node.Coords);
+                    SetCoords(ref this);
+                    //Coords = new Nodes.Node.Coords(x, y);
+                    //EndCoords = GetEndCoords(Coords);
                 }
             }
 
+            private static char GetSymbol(int position)
+            {
+                return position < expression.Length ? expression[position] : EOF;
+            }
+
+            private static void PushCoordinates()
+            {
+                for (int i = startPosition + 1; i <= endPosition; i++)
+                {
+                    switch (GetSymbol(i))
+                    {
+                        case LineFeed:
+                            x = 0;
+                            y++;
+                            break;
+                        case Tab:
+                            x += 3;
+                            break;
+                        default:
+                            x++;
+                            break;
+                    }
+                }
+                startPosition = endPosition;
+            }
 
             //{ private set { position = 0; } get{}; }
 
             private static void MakeLexems()
             {
                 List<Lexem> Lexems = new List<Lexem>();
-                //int startPos;
-                position = 0;
-                Lexem result;
+                //position = 0;
+                Lexem lexem;
                 do
                 {
-                    result = GetLexem();
-                    Lexems.Add(result);
+                    lexem = GetLexem();
+                    Lexems.Add(lexem);
 
                     //startPos = position;
                     /*if (result.LexType == LexType.EOF)
@@ -177,7 +212,7 @@ namespace Interpreter
                     
                     //SkipSpacesCoords();
 
-                } while (result.LexType != LexType.EOF);
+                } while (lexem.LexType != LexType.EOF);
                 ArrayOfLexems = Lexems.ToArray();
             }
 
@@ -279,7 +314,7 @@ namespace Interpreter
             private static Lexem GetLexem(bool goToNext = true)
             {
                 SkipSpaces();
-                prevPosition = position;
+                //prevPosition = endPosition;
                 Lexem result = default(Lexem);
                 switch (symbol)
                 {
@@ -293,14 +328,14 @@ namespace Interpreter
                         result = new Lexem(LexType.Minus);
                         break;
                     case Multiply:
-                        position++;
+                        endPosition++;
                         if (symbol == Multiply)
                         { 
                             result = new Lexem(LexType.Degree);
                         }
                         else
                         {
-                            position--;
+                            endPosition--;
                             result = new Lexem(LexType.Multiply);
                         }
                         break;
@@ -317,14 +352,14 @@ namespace Interpreter
                         result = new Lexem(LexType.Semicolon);
                         break;
                     case EqualSign:
-                        position++;
+                        endPosition++;
                         if (symbol == EqualSign)
                         {
                             result = new Lexem(LexType.Equal);
                         }
                         else
                         {
-                            position--;
+                            endPosition--;
                             result = new Lexem(LexType.EqualSign);
                         }
                         break;
@@ -344,52 +379,52 @@ namespace Interpreter
                         result = new Lexem(LexType.Colon);
                         break;
                     case Not:
-                        position++;
+                        endPosition++;
                         if (symbol == EqualSign)
                         {
                             result = new Lexem(LexType.NotEqual);
                         }
                         else
                         {
-                            position--;
+                            endPosition--;
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectOperator, new Nodes.Node.Coords(x, y)));
                             result = new Lexem(LexType.Error);
                         }
                         break;
                     case Higher:
-                        position++;
+                        endPosition++;
                         if (symbol == EqualSign)
                         {
                             result = new Lexem(LexType.HighEqual);
                         }
                         else
                         {
-                            position--;
+                            endPosition--;
                             result = new Lexem(LexType.Higher);
                         }
                         break;
                     case Lower:
-                        position++;
+                        endPosition++;
                         if (symbol == EqualSign)
                         {
                             result = new Lexem(LexType.LowEqual);
                         }
                         else
                         {
-                            position--;
+                            endPosition--;
                             result = new Lexem(LexType.Lower);
                         }
                         break;
                     case Quote:
-                        int newPos = position + 1;
+                        int newPos = endPosition + 1;
                         while (newPos < expression.Length && expression[newPos] != Quote && expression[newPos] != LineFeed)
                         {
                             newPos++;
                         }
-                        result = new Lexem(position + 1, newPos - 1);
-                        position = newPos;
+                        result = new Lexem(endPosition + 1, newPos - 1);
+                        endPosition = newPos;
                         /*if (goToNext)
-                            position = newPos;*/
+                            endPosition = newPos;*/
                         //return res;
                         break;
                     default:
@@ -401,7 +436,7 @@ namespace Interpreter
                         }
                         /*if (Spaces.Contains(symbol))
                         {
-                            start = position;
+                            start = endPosition;
                             SkipSpaces();
                             result = GetLexem(goToNext);
                             return result;
@@ -412,29 +447,35 @@ namespace Interpreter
                             break;
                         }
                         Parser.ErrorList.Add(new Error(LexerException.IncorrectSymbol, new Nodes.Node.Coords(x, y)));
-                        position++;
+                        endPosition++;
+                        //startPosition = endPosition;
+                        PushCoordinates();
                         result = GetLexem();
                         break;
                 }
-                position++;
-                x += position - prevPosition;
+                endPosition++;
+                PushCoordinates();
+                //startPosition = endPosition;
+                //x += endPosition - prevPosition;
                 return result;
             }
 
             private static void SkipSpaces()
             {
-                while (position < expression.Length && Spaces.Contains(symbol))
+                while (Spaces.Contains(symbol))
                 {
-                    if (symbol == LineFeed)
+                    /*if (symbol == LineFeed)
                     {
                         y++;
                         x = 0;
                     }
                     if (symbol == Tab)
                         x += 2;
-                    x++;
-                    position++;
+                    x++;*/
+                    endPosition++;
                 }
+                PushCoordinates();
+                //startPosition = endPosition;
             }
     
             /*public static void SkipSpacesCoords()
@@ -457,13 +498,13 @@ namespace Interpreter
 
             private static Lexem GetVar()
             {
-                int positionOfVar = position;
-                while (positionOfVar < expression.Length && (letters.Contains(expression[positionOfVar]) || digits.Contains(expression[positionOfVar]) || expression[positionOfVar] == Underline))
+                //int positionOfVar = position;
+                while ((letters.Contains(symbol) || digits.Contains(symbol) || symbol == Underline))
                 {
-                    positionOfVar++;
+                    endPosition++;
                 }
-                string result = expression.Substring(position, positionOfVar - position);
-                position = positionOfVar - 1;
+                string result = expression.Substring(startPosition, endPosition - startPosition);
+                endPosition--;
                 switch (result)
                 {
                     case If:
@@ -495,12 +536,12 @@ namespace Interpreter
 
             private static float GetNumber(bool goToNext = true)
             {
-                int start = position;
-                int end = GetEndOfNumber();
-                if (!goToNext)
-                    position = start;
-                float result;
-                if (!float.TryParse(expression.Substring(start, end - start + 1), out result))
+                //int start = position;
+                endPosition = GetEndOfNumber();
+                /*if (!goToNext)
+                    position = start;*/
+                //float result = 
+                /*if (!float.TryParse(expression.Substring(start, end - start + 1), out result))
                 {
                     int shift = 0;
                     while (!float.TryParse(expression.Substring(start, end - start + 1 - shift), out result))
@@ -509,20 +550,20 @@ namespace Interpreter
                     }
                 }
                 if (goToNext)
-                   position = end;
-                return result;
+                   position = end;*/
+                return float.Parse(expression.Substring(startPosition, endPosition - startPosition + 1));
             }
 
             private static int GetEndOfNumber()
             {
                 ExponentParts currPart = ExponentParts.IntegerPart;
-                while (position < expression.Length)
+                while (endPosition < expression.Length)
                 {
                     switch (currPart)
                     {
                         case ExponentParts.IntegerPart:
-                            if (position >= expression.Length)
-                                return position - 1;
+                            if (endPosition >= expression.Length)
+                                return endPosition - 1;
                             if (digits.Contains(symbol))
                                 break;
                             if (symbol == Comma)
@@ -535,12 +576,12 @@ namespace Interpreter
                                 currPart = ExponentParts.Exp;
                                 break;
                             }
-                            return position - 1;
+                            return endPosition - 1;
                         case ExponentParts.Comma:
-                            if (position >= expression.Length || IsDelimiterNumber(position))
+                            if (endPosition >= expression.Length || IsDelimiterNumber(endPosition))
                             {
                                 Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                                return position - 1;
+                                return endPosition - 1;
                             }
                             if (digits.Contains(symbol))
                             {
@@ -548,10 +589,10 @@ namespace Interpreter
                                 break;
                             }
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                            return position;
+                            return endPosition;
                         case ExponentParts.FractionPart:
-                            if (position >= expression.Length)
-                                return position - 1;
+                            if (endPosition >= expression.Length)
+                                return endPosition - 1;
                             if (digits.Contains(symbol))
                                 break;
                             if (symbol == Exp)
@@ -560,12 +601,12 @@ namespace Interpreter
                                 break;
                             }
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                            return position;
+                            return endPosition;
                         case ExponentParts.Exp:
-                            if (position >= expression.Length || IsDelimiterNumber(position))
+                            if (endPosition >= expression.Length || IsDelimiterNumber(endPosition))
                             {
                                 Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                                return position - 1;
+                                return endPosition - 1;
                             }
                             if (digits.Contains(symbol))
                             {
@@ -578,12 +619,12 @@ namespace Interpreter
                                 break;
                             }
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                            return position;
+                            return endPosition;
                         case ExponentParts.Sign:
-                            if (position >= expression.Length)
+                            if (endPosition >= expression.Length)
                             {
                                 Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                                return position - 1;
+                                return endPosition - 1;
                             }
                             if (digits.Contains(symbol))
                             {
@@ -591,23 +632,23 @@ namespace Interpreter
                                 break;
                             }
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                            return position;
+                            return endPosition;
                         case ExponentParts.Power:
-                            if (position >= expression.Length || IsDelimiterNumber(position))
-                                return position - 1;
+                            if (endPosition >= expression.Length || IsDelimiterNumber(endPosition))
+                                return endPosition - 1;
                             if (digits.Contains(symbol))
                                 break;
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                            return position;
+                            return endPosition;
                     }
-                    position++;
+                    endPosition++;
                 }
-                return position - 1;
+                return endPosition - 1;
             }
 
             private static bool IsDelimiterNumber(int position)
             {
-                return !(digits.Contains(symbol) || ExpNotation.Contains(symbol));
+                return !(digits.Contains(expression[position]) || ExpNotation.Contains(expression[position]));
             }
         }
     }

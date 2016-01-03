@@ -110,10 +110,10 @@ namespace Interpreter
                     return new Nodes.Node.Coords(x, y);
                 }
 
-                private static void SetCoords(ref Lexem lexem)
+                private void SetCoords()
                 {
-                    lexem.Coords = new Nodes.Node.Coords(x, y);
-                    lexem.EndCoords = GetEndCoords();
+                    Coords = new Nodes.Node.Coords(x, y);
+                    EndCoords = GetEndCoords();
                 }
 
                 public Lexem(LexType type)
@@ -123,7 +123,7 @@ namespace Interpreter
                     VarName = "";
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
-                    SetCoords(ref this);
+                    SetCoords();
                 }
 
                 public Lexem(float number)
@@ -133,7 +133,7 @@ namespace Interpreter
                     VarName = "";
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
-                    SetCoords(ref this);
+                    SetCoords();
                 }
 
                 public Lexem(string name)
@@ -143,7 +143,7 @@ namespace Interpreter
                     VarName = name;
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
-                    SetCoords(ref this);
+                    SetCoords();
                 }
 
                 public Lexem(int start, int end)
@@ -153,7 +153,7 @@ namespace Interpreter
                     VarName = expression.Substring(start, end - start + 1);
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
-                    SetCoords(ref this);
+                    SetCoords();
                 }
             }
 

@@ -124,8 +124,6 @@ namespace Interpreter
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords(ref this);
-                    /*Coords = new Nodes.Node.Coords(x, y);
-                    EndCoords = GetEndCoords(Coords);*/
                 }
 
                 public Lexem(float number)
@@ -136,8 +134,6 @@ namespace Interpreter
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords(ref this);
-                    //Coords = new Nodes.Node.Coords(x, y);
-                    //EndCoords = GetEndCoords(Coords);
                 }
 
                 public Lexem(string name)
@@ -148,8 +144,6 @@ namespace Interpreter
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords(ref this);
-                    //Coords = new Nodes.Node.Coords(x, y);
-                    // = GetEndCoords(Coords);
                 }
 
                 public Lexem(int start, int end)
@@ -160,8 +154,6 @@ namespace Interpreter
                     Coords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords(ref this);
-                    //Coords = new Nodes.Node.Coords(x, y);
-                    //EndCoords = GetEndCoords(Coords);
                 }
             }
 
@@ -191,69 +183,20 @@ namespace Interpreter
                 startPosition = endPosition;
             }
 
-            //{ private set { position = 0; } get{}; }
-
             private static void MakeLexems()
             {
                 List<Lexem> Lexems = new List<Lexem>();
-                //position = 0;
                 Lexem lexem;
                 do
                 {
                     lexem = GetLexem();
                     Lexems.Add(lexem);
-
-                    //startPos = position;
-                    /*if (result.LexType == LexType.EOF)
-                        break;*/
-                    //position++;
-                    //PushCoordinates(startPos, position);
-                    //result.EndCoords = new Nodes.Node.Coords(x,y);
-                    
-                    //SkipSpacesCoords();
-
                 } while (lexem.LexType != LexType.EOF);
                 ArrayOfLexems = Lexems.ToArray();
             }
 
-            /*private static void PushCoordinates(int start, int finish)
-            {
-                for (int i = start; i < finish; i++)
-                {
-                    if (i < expression.Length && expression[i] == LineFeed)
-                    {
-                        y++;
-                        x = 1;
-                    }
-                    else
-                        if (i < expression.Length && expression[i] == Tab)
-                            x += 3;
-                        else
-                            x++;
-                }
-            }*/
-
             public static Lexem LookAhead()
             {
-                //int startPos = position;
-                /*if (position >= expression.Length)
-                {
-                    return new Lexem(LexType.EOF);
-                }
-                Lexem result = GetLexem(false);
-                for (int i = startPos; i < position; i++)
-                {
-                    if (i < expression.Length && expression[i] == '\n')
-                    {
-                        y++;
-                        x = 1;
-                    }
-                    else
-                        x++;
-                }
-                return result;*/
-                /*if (position >= ArrayOfLexems.Length)
-                    return new Lexem(LexType.EOF);*/
                 return ArrayOfLexems[position];
             }
 
@@ -264,8 +207,6 @@ namespace Interpreter
                     position++;
                 }
                 position--;
-                //x = ArrayOfLexems[position].Coords.X;
-                //y = ArrayOfLexems[position].Coords.Y;
                 return ArrayOfLexems[position];
             }
 
@@ -280,41 +221,12 @@ namespace Interpreter
 
             public static Lexem NextLexem()
             {
-                /*if (position >= expression.Length)
-                {
-                    return new Lexem(LexType.EOF);
-                }
-                int startPos = position;
-                Lexem result = GetLexem(true);
-                Lexems.Push(result);
-                position++;
-                for (int i = startPos; i < position; i++)
-                {
-                    if (i < expression.Length && expression[i] == LineFeed)
-                    {
-                        y++;
-                        x = 1;
-                    }
-                    else
-                        if (i < expression.Length && expression[i] == Tab)
-                            x += 3;
-                        else
-                            x++;
-                }
-                return result;*/
-                /*if (position >= ArrayOfLexems.Length)
-                    return new Lexem(LexType.EOF);*/
-                //x = ArrayOfLexems[position].Coords.X;
-                //y = ArrayOfLexems[position].Coords.Y;
-                /*if (position < ArrayOfLexems.Length - 1)
-                    position++;*/
                 return (position < ArrayOfLexems.Length - 1) ? ArrayOfLexems[position++] : ArrayOfLexems[position];
             }
 
-            private static Lexem GetLexem(bool goToNext = true)
+            private static Lexem GetLexem()
             {
                 SkipSpaces();
-                //prevPosition = endPosition;
                 Lexem result = default(Lexem);
                 switch (symbol)
                 {
@@ -423,9 +335,6 @@ namespace Interpreter
                         }
                         result = new Lexem(endPosition + 1, newPos - 1);
                         endPosition = newPos;
-                        /*if (goToNext)
-                            endPosition = newPos;*/
-                        //return res;
                         break;
                     default:
 
@@ -434,13 +343,6 @@ namespace Interpreter
                             result = new Lexem(GetNumber());
                             break;
                         }
-                        /*if (Spaces.Contains(symbol))
-                        {
-                            start = endPosition;
-                            SkipSpaces();
-                            result = GetLexem(goToNext);
-                            return result;
-                        }*/
                         if (letters.Contains(symbol) || symbol == Underline)
                         {
                             result = GetVar();
@@ -448,15 +350,12 @@ namespace Interpreter
                         }
                         Parser.ErrorList.Add(new Error(LexerException.IncorrectSymbol, new Nodes.Node.Coords(x, y)));
                         endPosition++;
-                        //startPosition = endPosition;
                         PushCoordinates();
                         result = GetLexem();
                         break;
                 }
                 endPosition++;
                 PushCoordinates();
-                //startPosition = endPosition;
-                //x += endPosition - prevPosition;
                 return result;
             }
 
@@ -464,41 +363,14 @@ namespace Interpreter
             {
                 while (Spaces.Contains(symbol))
                 {
-                    /*if (symbol == LineFeed)
-                    {
-                        y++;
-                        x = 0;
-                    }
-                    if (symbol == Tab)
-                        x += 2;
-                    x++;*/
                     endPosition++;
                 }
                 PushCoordinates();
-                //startPosition = endPosition;
             }
-    
-            /*public static void SkipSpacesCoords()
-            {
-                while (position < expression.Length && Spaces.Contains(symbol))
-                {
-                    if (symbol == LineFeed)
-                    {
-                        y++;
-                        x = 1;
-                    }
-                    else
-                        if (symbol == Tab)
-                            x += 3;
-                        else
-                            x++;
-                    position++;
-                }
-            }*/
+   
 
             private static Lexem GetVar()
             {
-                //int positionOfVar = position;
                 while ((letters.Contains(symbol) || digits.Contains(symbol) || symbol == Underline))
                 {
                     endPosition++;
@@ -534,23 +406,9 @@ namespace Interpreter
                 Power
             }
 
-            private static float GetNumber(bool goToNext = true)
+            private static float GetNumber()
             {
-                //int start = position;
                 endPosition = GetEndOfNumber();
-                /*if (!goToNext)
-                    position = start;*/
-                //float result = 
-                /*if (!float.TryParse(expression.Substring(start, end - start + 1), out result))
-                {
-                    int shift = 0;
-                    while (!float.TryParse(expression.Substring(start, end - start + 1 - shift), out result))
-                    {
-                        shift++;
-                    }
-                }
-                if (goToNext)
-                   position = end;*/
                 return float.Parse(expression.Substring(startPosition, endPosition - startPosition + 1));
             }
 

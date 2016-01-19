@@ -11,7 +11,7 @@ namespace Interpreter
         internal static class Lexer
         {
             public const char Add = '+', Minus = '-', Divide = '/', Multiply = '*', OpenBracket = '(', CloseBracket = ')', Space = ' ', Semicolon = ';', EqualSign = '=',
-                              Underline = '_', OpenBlockBracket = '{', CloseBlockBracket = '}', Comma = ',', Not = '!', Higher = '>', Lower = '<', Quote = '"', LineFeed = '\n',
+                              Underline = '_', OpenBlockBracket = '{', CloseBlockBracket = '}', Point = '.', Not = '!', Higher = '>', Lower = '<', Quote = '"', LineFeed = '\n',
                               Tab = '\t', Exp = 'E', Colon = ':', OpenSquadBracket = '[', CloseSquadBracket = ']', EOF = '\0';
 
             public const string Degree = "**", Spaces = " \r\n\t", If = "if", Else = "else", For = "for", Print = "print", ExpNotation = "E,+-", While = "while",
@@ -399,7 +399,7 @@ namespace Interpreter
             private enum ExponentParts
             {
                 IntegerPart,
-                Comma,
+                Point,
                 FractionPart,
                 Exp,
                 Sign,
@@ -424,9 +424,9 @@ namespace Interpreter
                                 return endPosition - 1;
                             if (digits.Contains(symbol))
                                 break;
-                            if (symbol == Comma)
+                            if (symbol == Point)
                             {
-                                currPart = ExponentParts.Comma;
+                                currPart = ExponentParts.Point;
                                 break;
                             }
                             if (symbol == Exp)
@@ -435,7 +435,7 @@ namespace Interpreter
                                 break;
                             }
                             return endPosition - 1;
-                        case ExponentParts.Comma:
+                        case ExponentParts.Point:
                             if (endPosition >= expression.Length || IsDelimiterNumber(endPosition))
                             {
                                 Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));

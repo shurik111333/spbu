@@ -152,8 +152,7 @@ namespace Interpreter
             }
             else
             {
-                string Label = Lexer.NextLexem().VarName;
-                result = new Nodes.GoTo(Label);
+                result = new Nodes.GoTo(Lexer.NextLexem().VarName);
                 result.Head = result;
                 result.Tail = result;
             }

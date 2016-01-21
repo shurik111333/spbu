@@ -298,9 +298,8 @@ namespace Interpreter
                         }
                         else
                         {
-                            endPosition--;
                             Parser.ErrorList.Add(new Error(LexerException.IncorrectOperator, new Nodes.Node.Coords(x, y)));
-                            result = new Lexem(LexType.Error);
+                            result = GetLexem();
                         }
                         break;
                     case Higher:

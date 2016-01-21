@@ -25,7 +25,7 @@ namespace Interpreter
             {
                 get
                 {
-                    return ArrayOfLexems[position].Coords;
+                    return ArrayOfLexems[position].StartCoords;
                 }
             }
 
@@ -101,7 +101,7 @@ namespace Interpreter
                 public LexType LexType;
                 public float Value;
                 public string VarName;
-                public Nodes.Node.Coords Coords;
+                public Nodes.Node.Coords StartCoords;
                 public Nodes.Node.Coords EndCoords;
 
                 private static Nodes.Node.Coords GetEndCoords()
@@ -112,7 +112,7 @@ namespace Interpreter
 
                 private void SetCoords()
                 {
-                    Coords = new Nodes.Node.Coords(x, y);
+                    StartCoords = new Nodes.Node.Coords(x, y);
                     EndCoords = GetEndCoords();
                 }
 
@@ -121,7 +121,7 @@ namespace Interpreter
                     LexType = type;
                     Value = 0;
                     VarName = "";
-                    Coords = default(Nodes.Node.Coords);
+                    StartCoords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords();
                 }
@@ -131,7 +131,7 @@ namespace Interpreter
                     LexType = LexType.Number;
                     Value = number;
                     VarName = "";
-                    Coords = default(Nodes.Node.Coords);
+                    StartCoords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords();
                 }
@@ -141,7 +141,7 @@ namespace Interpreter
                     LexType = LexType.Variable;
                     Value = 0;
                     VarName = name;
-                    Coords = default(Nodes.Node.Coords);
+                    StartCoords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords();
                 }
@@ -151,7 +151,7 @@ namespace Interpreter
                     LexType = LexType.String;
                     Value = 0;
                     VarName = expression.Substring(start, end - start + 1);
-                    Coords = default(Nodes.Node.Coords);
+                    StartCoords = default(Nodes.Node.Coords);
                     EndCoords = default(Nodes.Node.Coords);
                     SetCoords();
                 }

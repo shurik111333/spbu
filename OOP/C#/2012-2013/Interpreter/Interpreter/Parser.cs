@@ -670,12 +670,14 @@ namespace Interpreter
             {
                 return new Nodes.MyString(currLexem.VarName);
             }
-            if (currLexem.LexType == Lexer.LexType.EOF)
+            /*if (currLexem.LexType == Lexer.LexType.EOF)
             {
                 throw new ParserException();
-            }
-            ErrorList.Add(new Error(ParserException.IncorrectExpression, Lexer.LookBack().EndCoords));
-            return Factor();
+            }*/
+            if (currLexem.LexType != Lexer.LexType.EOF)
+                Lexer.RollBack();
+            ErrorList.Add(new Error(ParserException.IncorrectExpression, Lexer.LookBack().StartCoords, Lexer.LookBack().EndCoords));
+            return new Nodes.Expression();
         }
 
     }

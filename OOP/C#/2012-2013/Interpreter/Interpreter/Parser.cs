@@ -106,7 +106,7 @@ namespace Interpreter
             statement = Label();
             if (statement != null)
                 return statement;
-            ErrorList.Add(new Error(ParserException.IncorrectStatement, Lexer.LookBack().StartCoords, Lexer.LookBack().EndCoords));
+            ErrorList.Add(new Error(ParserException.IncorrectStatement, Lexer.LookAhead().StartCoords, Lexer.LookAhead().EndCoords));
 
             /*while (Lexer.LookAhead().LexType != Lexer.LexType.Semicolon && Lexer.LookAhead().LexType != Lexer.LexType.EOF)
                 Lexer.NextLexem();
@@ -172,7 +172,6 @@ namespace Interpreter
                 return null;
 
             Lexer.NextLexem();
-            //Lexer.SkipSpacesCoords();
 
             if (Lexer.LookAhead().LexType != Lexer.LexType.OpenBreaket)
                 ErrorList.Add(new Error(ParserException.MissedOpenBracket, Lexer.LookBack().EndCoords));
@@ -188,16 +187,16 @@ namespace Interpreter
 
             Nodes.End end = new Nodes.End();
 
-            Nodes.Statement head = Block(condition);
+            Nodes.Block block = Block();
 
+            block.Last.Tail.Next = condition;
+            
             condition.NextFalse = end;
-            condition.NextTrue = head.Head;
+            condition.NextTrue = block.First.Head;
 
             //Statements.Add(end);
-            Nodes.While result = new Nodes.While(condition, head, end);
+            Nodes.While result = new Nodes.While(condition, block.First, end);
 
-            result.Head = result;
-            result.Tail = result;
             result.Coords = coords;
 
             return result;
@@ -261,7 +260,9 @@ namespace Interpreter
 
             /*if (Lexer.LookAhead().LexType != Lexer.LexType.Variable)
                 Lexer.NextLexem();*/
+
             Nodes.Assignment assgn = Assignment();
+
             //Statements.Add(assgn);
 
             if (Lexer.LookAhead().LexType != Lexer.LexType.Semicolon)
@@ -297,12 +298,12 @@ namespace Interpreter
             else
                 Lexer.NextLexem();
 
-            Nodes.Statement FirstStatement = Block(chngAssgn);
-            cond.NextTrue = FirstStatement.Head;
+            Nodes.Block FirstStatement = Block(); //TODO
+            cond.NextTrue = FirstStatement.First.Head;
 
             //Statements.Add(end);
 
-            return new Nodes.For(assgn, cond, chngAssgn, FirstStatement, end, coords);
+            return new Nodes.For(assgn, cond, chngAssgn, FirstStatement.First.Head, end, coords);
         }
 
         private static Nodes.If If()
@@ -338,24 +339,26 @@ namespace Interpreter
 
             Nodes.End end = new Nodes.End();
 
-            Nodes.Statement ifBlock = Block(end);
+            //TODO
 
-            Nodes.Statement elseBlock = null;
+            Nodes.Block ifBlock = Block();
+
+            Nodes.Block elseBlock = null;
             if (Lexer.LookAhead().LexType == Lexer.LexType.Else)
             {
                 Lexer.NextLexem();
-                elseBlock = Block(end);
+                elseBlock = Block();
             }
 
-            condition.NextTrue = ifBlock.Head;
+            condition.NextTrue = ifBlock.First.Head;
             if (elseBlock != null)
-                condition.NextFalse = elseBlock.Head;
+                condition.NextFalse = elseBlock.First.Head;
             else
                 condition.NextFalse = end;
 
 
             //Statements.Add(end);
-            return new Nodes.If(condition, ifBlock, elseBlock, end, coords);
+            return new Nodes.If(condition, ifBlock.First, elseBlock.First, end, coords);
         }
 
         private static Nodes.Condition Condition()
@@ -401,8 +404,10 @@ namespace Interpreter
             return result;
         }
 
-        private static Nodes.Statement Block(Nodes.Statement End)
+        //private static Nodes.Statement Block(Nodes.Statement End)
+        private static Nodes.Block Block()
         {
+            Nodes.Block result = null;
             Nodes.Statement FirstStatement = null;
             if (Lexer.LookAhead().LexType == Lexer.LexType.OpenBlockBracket)
             {
@@ -422,25 +427,41 @@ namespace Interpreter
 
                     PrevStatement = CurrStatement.Tail;
                 }
-                if (CurrStatement != null)
-                    CurrStatement.Tail.Next = End;
+
+                /*if (CurrStatement != null)
+                    CurrStatement.Tail.Next = End;*/
+
                 if (Lexer.LookAhead().LexType != Lexer.LexType.CloseBlockBracket)
                 {
                     ErrorList.Add(new Error(ParserException.MissedBlockBracket, Lexer.LookBack().EndCoords));
                 }
                 else
                     Lexer.NextLexem();
+                if (FirstStatement == null)
+                {
+                    result = new Nodes.Block();
+                }
+                else
+                {
+                    result = new Nodes.Block(FirstStatement.Head, CurrStatement != null ? CurrStatement.Tail : PrevStatement.Tail);
+                }
             }
             else
             {
                 FirstStatement = Statement();
 
                 if (FirstStatement == null)
-                    ErrorList.Add(new Error(ParserException.NeedStatement, Lexer.LookBack().EndCoords));
+                {
+                    ErrorList.Add(new Error(ParserException.NeedStatement, Lexer.LookAhead().StartCoords));
+                    result = new Nodes.Block();
+                }
                 else
-                    FirstStatement.Tail.Next = End;
+                    result = new Nodes.Block(FirstStatement.Head, FirstStatement.Tail);
+                
+                /*else
+                    FirstStatement.Tail.Next = End;*/
             }
-            return FirstStatement;
+            return result;
         }
 
         private static Nodes.Assignment Assignment()

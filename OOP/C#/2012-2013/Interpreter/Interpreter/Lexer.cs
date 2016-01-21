@@ -436,8 +436,6 @@ namespace Interpreter
                     switch (currPart)
                     {
                         case ExponentParts.IntegerPart:
-                            /*if (endPosition >= expression.Length)
-                                return endPosition - 1;*/
                             if (digits.Contains(symbol))
                                 break;
                             if (symbol == Point)
@@ -452,22 +450,13 @@ namespace Interpreter
                             }
                             return endPosition - 1;
                         case ExponentParts.Point:
-                            //if (endPosition >= expression.Length || IsDelimiterNumber(endPosition))
-                            /*if (IsDelimiterNumber(symbol))
-                            {
-                                Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                                return endPosition - 1;
-                            }*/
                             if (digits.Contains(symbol))
                             {
                                 currPart = ExponentParts.FractionPart;
                                 break;
                             }
-                            //Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                             return endPosition - 1;
                         case ExponentParts.FractionPart:
-                            /*if (endPosition >= expression.Length)
-                                return endPosition - 1;*/
                             if (digits.Contains(symbol))
                                 break;
                             if (Exp.Contains(symbol))
@@ -475,14 +464,8 @@ namespace Interpreter
                                 currPart = ExponentParts.Exp;
                                 break;
                             }
-                            //Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                             return endPosition - 1;
                         case ExponentParts.Exp:
-                            /*if (endPosition >= expression.Length || IsDelimiterNumber(endPosition))
-                            {
-                                Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                                return endPosition - 1;
-                            }*/
                             if (digits.Contains(symbol))
                             {
                                 currPart = ExponentParts.Power;
@@ -493,38 +476,23 @@ namespace Interpreter
                                 currPart = ExponentParts.Sign;
                                 break;
                             }
-                            //Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                             return endPosition - 1;
                         case ExponentParts.Sign:
-                            /*if (endPosition >= expression.Length)
-                            {
-                                Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
-                                return endPosition - 1;
-                            }*/
                             if (digits.Contains(symbol))
                             {
                                 currPart = ExponentParts.Power;
                                 break;
                             }
-                            //Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                             return endPosition - 1;
                         case ExponentParts.Power:
-                            /*if (endPosition >= expression.Length || IsDelimiterNumber(endPosition))
-                                return endPosition - 1;*/
                             if (digits.Contains(symbol))
                                 break;
-                            //Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, new Nodes.Node.Coords(x, y)));
                             return endPosition - 1;
                     }
                     endPosition++;
                 }
                 return endPosition - 1;
             }
-
-            /*private static bool IsDelimiterNumber(int position)
-            {
-                return !(digits.Contains(expression[position]) || ExpNotation.Contains(expression[position]));
-            }*/
         }
     }
 }

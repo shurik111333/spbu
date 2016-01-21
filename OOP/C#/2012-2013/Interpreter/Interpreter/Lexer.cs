@@ -423,7 +423,7 @@ namespace Interpreter
                 {
                     result = new Lexem(number);
                     if (!correctNumber)
-                        Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, result.EndCoords));
+                        Parser.ErrorList.Add(new Error(LexerException.IncorrectNumber, result.StartCoords, result.EndCoords));
                 }
                 return result;
             }

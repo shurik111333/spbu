@@ -10,7 +10,7 @@ namespace Interpreter
         public const string IncorrectStatement = "Incorrect statement", NeedSemicolon = "Expected semicolon", MissedCloseBracket = ") is missed",
                             MissedOpenBracket = "( is missed", IncorrectCondition = "Condition is incorrect", MissedBlockBracket = "} is missed",
                             IncorrectExpression = "Incorrect expression", NeedStatement = "Expected a correct statement", NeedLabel = "Expected label",
-                            NeedCloseSquadBracket = "Expected ]", NeedEqualSign = "= expected";
+                            NeedCloseSquadBracket = "Expected ]", NeedEqualSign = "= expected", NeedCompareSign = "Expected compare sign";
 
         public ParserException()
             : base()

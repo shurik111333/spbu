@@ -10,18 +10,24 @@ namespace Interpreter
     {
         public static List<Error> ErrorList;
 
-        
-
         public struct Error
         {
             public string Description;
-            public int X, Y;
+            public Nodes.Node.Coords Start;
+            public Nodes.Node.Coords End;
 
             public Error(string error, Nodes.Node.Coords coords)
             {
                 Description = error;
-                X = coords.X;
-                Y = coords.Y;
+                Start = coords;
+                End = coords;
+            }
+
+            public Error(string error, Nodes.Node.Coords start, Nodes.Node.Coords end)
+            {
+                Description = error;
+                Start = start;
+                End = end;
             }
         }
 
@@ -100,7 +106,7 @@ namespace Interpreter
             statement = Label();
             if (statement != null)
                 return statement;
-            ErrorList.Add(new Error(ParserException.IncorrectStatement, Lexer.LookBack().EndCoords));
+            ErrorList.Add(new Error(ParserException.IncorrectStatement, Lexer.LookBack().StartCoords, Lexer.LookBack().EndCoords));
 
             /*while (Lexer.LookAhead().LexType != Lexer.LexType.Semicolon && Lexer.LookAhead().LexType != Lexer.LexType.EOF)
                 Lexer.NextLexem();
@@ -358,36 +364,36 @@ namespace Interpreter
             Nodes.Node.Coords coords = Lexer.Coords;
             Nodes.Expression left = Expr();
             Lexer.Lexem currLexem = Lexer.NextLexem();
-            Nodes.Condition.CompareSign condition;
+            Nodes.Condition.CompareSign sign;
             switch (currLexem.LexType)
             {
                 case Lexer.LexType.Equal:
-                    condition = Nodes.Condition.CompareSign.Equal;
+                    sign = Nodes.Condition.CompareSign.Equal;
                     break;
                 case Lexer.LexType.HighEqual:
-                    condition = Nodes.Condition.CompareSign.HighEqual;
+                    sign = Nodes.Condition.CompareSign.HighEqual;
                     break;
                 case Lexer.LexType.Higher:
-                    condition = Nodes.Condition.CompareSign.Higher;
+                    sign = Nodes.Condition.CompareSign.Higher;
                     break;
                 case Lexer.LexType.LowEqual:
-                    condition = Nodes.Condition.CompareSign.LowEqual;
+                    sign = Nodes.Condition.CompareSign.LowEqual;
                     break;
                 case Lexer.LexType.Lower:
-                    condition = Nodes.Condition.CompareSign.Lower;
+                    sign = Nodes.Condition.CompareSign.Lower;
                     break;
                 case Lexer.LexType.NotEqual:
-                    condition = Nodes.Condition.CompareSign.NotEqual;
+                    sign = Nodes.Condition.CompareSign.NotEqual;
                     break;
                 default:
                     if (currLexem.LexType != Lexer.LexType.EOF)
                         Lexer.RollBack();
-                    ErrorList.Add(new Error(ParserException.IncorrectCondition, Lexer.LookBack().EndCoords));
-                    condition = Nodes.Condition.CompareSign.Error;
+                    ErrorList.Add(new Error(ParserException.NeedCompareSign, Lexer.LookBack().EndCoords));
+                    sign = Nodes.Condition.CompareSign.Error;
                     break;
             }
             Nodes.Expression right = Expr();
-            Nodes.Condition result = new Nodes.Condition(left, condition, right);
+            Nodes.Condition result = new Nodes.Condition(left, sign, right);
             //Statements.Add(result);
             result.Head = result;
             result.Tail = result;

@@ -46,7 +46,7 @@ namespace Interpreter
         {
             foreach (Parser.Error error in Parser.ErrorList)
             {
-                errors.Add(string.Format("{0}({1}:{2})", error.Description, error.Y, error.X));
+                errors.Add(string.Format("{0}({1}:{2})", error.Description, error.End.Y, error.End.X));
             }
         }
 

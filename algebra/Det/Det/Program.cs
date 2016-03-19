@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Det
 {
@@ -297,31 +298,48 @@ namespace Det
             for (int i = 0; i < n; i++)
             {
                 if (i % 2 == 0)
+                {
                     res += a[0, i] * Addition(0, i).Det();
+                }
                 else
                     res -= a[0, i] * Addition(0, i).Det();
             }
             return res;
         }
+
+        public override string ToString()
+        {
+            return "det(" + n.ToString() + ")";
+        }
     }
 
     class Program
     {
+        public static StringBuilder result = new StringBuilder();
+        private static string resFile = "res.txt";
+
         static void Main(string[] args)
         {
-            int n = 3;
+            Console.WriteLine("Enter file name.");
+            Console.WriteLine("On first line file must contains n - size of determinant.");
+            Console.WriteLine("On next n * n lines print elements of matrix in order left-right, top-bottom(e.x. print elements of first line of matrix, then second line etc.)");
+            Console.WriteLine("Result was in " + resFile + ".");
+            string file = Console.ReadLine();
+            StreamReader f = new StreamReader(file);
+            int n = int.Parse(f.ReadLine());
             Poly[,] a = new Poly[n, n];
-            a[0, 0] = new Poly("xy^2");
-            a[0, 1] = new Poly("xy^2");
-            a[0, 2] = new Poly("-1 - xy^2");
-            a[1, 0] = new Poly("x^2y + xy^2");
-            a[1, 1] = new Poly("x^2y + x");
-            a[1, 2] = new Poly("x - y^2");
-            a[2, 0] = new Poly("-y + x^2y");
-            a[2, 1] = new Poly("-y^2");
-            a[2, 2] = new Poly("y + xy");
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    a[i, j] = new Poly(f.ReadLine());
+                }
+            }
+            f.Close();
+            StreamWriter w = new StreamWriter(resFile);
             Matrix m = new Matrix(n, a);
-            Console.WriteLine(m.Det().ToString());
+            w.WriteLine(m.Det().ToString());
+            w.Close();
         }
     }
 }

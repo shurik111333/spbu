@@ -200,6 +200,8 @@ namespace Det
 
         public override string ToString()
         {
+            if (a == null)
+                return "";
             StringBuilder res = new StringBuilder("");
             int count = 0;
             for (int i = size - 1; i >= 0; i--)
@@ -290,27 +292,48 @@ namespace Det
             return res;
         }
 
-        public Poly Det(int q)
+        public Poly Det(int q, Poly prev, string sign)
         {
-            if (Program.result.Count == q)
-                Program.result.Add(new List<Element>());
-            if (n == 2)
+            if (Program.r.Count == q)
+                Program.r.Add(new StringBuilder());
+            /*if (Program.r.Count == q + 1)
+                Program.r.Add(new StringBuilder());*/
+            if (n == 1)
             {
-                Poly result = a[0, 0] * a[1, 1] - a[0, 1] * a[1, 0];
-                Program.result[q].Add(new Element(result, new Matrix(0)));
-                return result;
+                //Poly result = a[0, 0] * a[1, 1] - a[0, 1] * a[1, 0];
+                //Program.result[q].Add(new Element(result, new Matrix(0)));
+                Program.r[q].Append(sign + "(" + (prev * a[0, 0]).ToString() + ")");
+                /*if (Program.r.Count == q + 1)
+                    Program.r.Add(new StringBuilder());
+                Program.r[q + 1].Append(sign + "(" + (prev * result).ToString() + ")");*/
+                return a[0, 0];
             }
             Poly res = new Poly();
-            int ind = Program.result.Count;
+            if (sign != "")
+                for (int i = q; i < Program.r.Count; i++)
+                    Program.r[i].Append(sign + "(");
+            //Program.r[q].Append("(");
             for (int i = 0; i < n; i++)
             {
                 Matrix add = Addition(0, i);
-                Program.result[q].Add(new Element(a[0, i], add));
+                string s = "";
                 if (i % 2 == 0)
-                    res += a[0, i] * add.Det(q + 1);
+                {
+                    if (i != 0)
+                    {
+                        s = " + ";
+                    }
+                    res += a[0, i] * add.Det(q + 1, prev * a[0, i], s);
+                }
                 else
-                    res -= a[0, i] * add.Det(q + 1);
+                {
+                    s = " - ";
+                    res -= a[0, i] * add.Det(q + 1, prev * a[0, i], s);
+                }
+                Program.r[q].Append(s + "(" + (a[0, i] * prev).ToString() + ") * " + add.ToString());
             }
+            if (sign != "")
+                Program.r[q].Append(")");
             return res;
         }
 
@@ -323,31 +346,10 @@ namespace Det
         }
     }
 
-    struct Element
-    {
-        Poly p;
-        Matrix m;
-
-        public Element(Poly p, Matrix m)
-        {
-            this.p = p;
-            this.m = m;
-        }
-
-        public override string ToString()
-        {
-            string matr = m.ToString();
-            string res = "(" + p.ToString() + ")";
-            if (matr != "")
-                res += " * " + matr;
-            return res;
-        }
-    }
-
     class Program
     {
         private static string resFile = "res.txt";
-        public static List<List<Element>> result = new List<List<Element>>();
+        public static List<StringBuilder> r = new List<StringBuilder>();
 
         static void Main(string[] args)
         {
@@ -369,20 +371,10 @@ namespace Det
             f.Close();
             Matrix m = new Matrix(n, a);
             StreamWriter w = new StreamWriter(resFile);
-            string res1 = m.Det(0).ToString();
-            StringBuilder res = new StringBuilder(m.ToString());
-            for (int i = 0; i < result.Count; i++)
-            {
-                res.Append(" =\n= ");
-                res.Append(result[i][0].ToString());
-                for (int j = 1; j < result[i].Count; j++)
-                {
-                    res.Append((j % 2 == 0) ? " + " : " - ");
-                    res.Append(result[i][j].ToString());
-                }
-            }
-            res.Append(" =\n= " + res1);
-            w.WriteLine(res);
+            r.Add(new StringBuilder(m.ToString()));
+            string res1 = m.Det(1, new Poly("1"), "").ToString();
+            r.Add(new StringBuilder(res1));
+            w.WriteLine(string.Join<StringBuilder>(" =\n= ", r));
             w.Close();
         }
     }

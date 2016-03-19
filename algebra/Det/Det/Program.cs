@@ -35,8 +35,24 @@ namespace Det
             r.Add(new StringBuilder("$" + m.ToString()));
             string res1 = m.Det(1, new Poly("1"), "").ToString();
             r.Add(new StringBuilder(res1 + "$"));
-            w.WriteLine(string.Join<StringBuilder>(" =\n ", r));
+            string result = string.Join<StringBuilder>(" =\n ", r);
+            w.WriteLine(result);
             w.Close();
+            int b = 0;
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (b < 0 || (result[i] == '=' && b != 0))
+                {
+                    Console.WriteLine("Bad brackets");
+                    break;
+                }
+                if (result[i] == '(')
+                    b++;
+                if (result[i] == ')')
+                    b--;
+            }
+            if (b == 0)
+                Console.WriteLine("Good brackets");
         }
     }
 }

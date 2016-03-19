@@ -91,7 +91,8 @@ namespace Det
                 Program.r[q].Append(s + "(" + (a[0, i] * prev).ToString() + ") * " + add.ToString());
             }
             if (sign != "")
-                Program.r[q].Append(")");
+                for (int i = q; i < Program.r.Count; i++)
+                    Program.r[i].Append(")");
             return res;
         }
 

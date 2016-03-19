@@ -290,33 +290,64 @@ namespace Det
             return res;
         }
 
-        public Poly Det()
+        public Poly Det(int q)
         {
-            if (n == 1)
-                return a[0, 0];
+            if (Program.result.Count == q)
+                Program.result.Add(new List<Element>());
+            if (n == 2)
+            {
+                Poly result = a[0, 0] * a[1, 1] - a[0, 1] * a[1, 0];
+                Program.result[q].Add(new Element(result, new Matrix(0)));
+                return result;
+            }
             Poly res = new Poly();
+            int ind = Program.result.Count;
             for (int i = 0; i < n; i++)
             {
+                Matrix add = Addition(0, i);
+                Program.result[q].Add(new Element(a[0, i], add));
                 if (i % 2 == 0)
-                {
-                    res += a[0, i] * Addition(0, i).Det();
-                }
+                    res += a[0, i] * add.Det(q + 1);
                 else
-                    res -= a[0, i] * Addition(0, i).Det();
+                    res -= a[0, i] * add.Det(q + 1);
             }
             return res;
         }
 
         public override string ToString()
         {
-            return "det(" + n.ToString() + ")";
+            if (n > 0)
+                return "det(" + n.ToString() + ")";
+            else
+                return "";
+        }
+    }
+
+    struct Element
+    {
+        Poly p;
+        Matrix m;
+
+        public Element(Poly p, Matrix m)
+        {
+            this.p = p;
+            this.m = m;
+        }
+
+        public override string ToString()
+        {
+            string matr = m.ToString();
+            string res = "(" + p.ToString() + ")";
+            if (matr != "")
+                res += " * " + matr;
+            return res;
         }
     }
 
     class Program
     {
-        public static StringBuilder result = new StringBuilder();
         private static string resFile = "res.txt";
+        public static List<List<Element>> result = new List<List<Element>>();
 
         static void Main(string[] args)
         {
@@ -336,9 +367,22 @@ namespace Det
                 }
             }
             f.Close();
-            StreamWriter w = new StreamWriter(resFile);
             Matrix m = new Matrix(n, a);
-            w.WriteLine(m.Det().ToString());
+            StreamWriter w = new StreamWriter(resFile);
+            string res1 = m.Det(0).ToString();
+            StringBuilder res = new StringBuilder(m.ToString());
+            for (int i = 0; i < result.Count; i++)
+            {
+                res.Append(" =\n= ");
+                res.Append(result[i][0].ToString());
+                for (int j = 1; j < result[i].Count; j++)
+                {
+                    res.Append((j % 2 == 0) ? " + " : " - ");
+                    res.Append(result[i][j].ToString());
+                }
+            }
+            res.Append(" =\n= " + res1);
+            w.WriteLine(res);
             w.Close();
         }
     }

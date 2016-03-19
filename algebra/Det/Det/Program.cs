@@ -339,10 +339,22 @@ namespace Det
 
         public override string ToString()
         {
-            if (n > 0)
-                return "det(" + n.ToString() + ")";
-            else
-                return "";
+            if (n == 1)
+                return "(" + a[0, 0].ToString() + ")";
+            StringBuilder result = new StringBuilder(@"\begin{vmatrix} " + a[0, 0].ToString());
+            for (int i = 1; i < n; i++)
+            {
+                result.Append(" & " + a[0, i]);
+            }
+            for (int i = 1; i < n; i++)
+            {
+                result.Append(@" \\ " + a[i, 0].ToString());
+                for (int j = 1; j < n; j++)
+                {
+                    result.Append(" & " + a[i, j].ToString());
+                }
+            }
+            return result.Append(@" \end{vmatrix}").ToString();
         }
     }
 
@@ -371,10 +383,10 @@ namespace Det
             f.Close();
             Matrix m = new Matrix(n, a);
             StreamWriter w = new StreamWriter(resFile);
-            r.Add(new StringBuilder(m.ToString()));
+            r.Add(new StringBuilder("$" + m.ToString()));
             string res1 = m.Det(1, new Poly("1"), "").ToString();
-            r.Add(new StringBuilder(res1));
-            w.WriteLine(string.Join<StringBuilder>(" =\n= ", r));
+            r.Add(new StringBuilder(res1 + "$"));
+            w.WriteLine(string.Join<StringBuilder>(" =\n ", r));
             w.Close();
         }
     }

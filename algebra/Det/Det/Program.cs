@@ -291,8 +291,8 @@ namespace Det
 
         public Poly Det()
         {
-            if (n == 2)
-                return a[0, 0] * a[1, 1] - a[0, 1] * a[1, 0];
+            if (n == 1)
+                return a[0, 0];
             Poly res = new Poly();
             for (int i = 0; i < n; i++)
             {
